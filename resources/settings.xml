@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<settings>
+	<category label="Přihlášení">
+                <setting label="Login" type="text" id="username" default=""/>
+                <setting label="Heslo" type="text" id="password" option="hidden" enable="!eq(-1,false)" default=""/>
+                <setting label="Device Id" type="text" id="deviceid" default=""/>
+        </category>
+	<category label="Nastavení">
+                <setting label="IP adresa serveru (IP pro automatické zjištění adresy)" type="text" id="webserver_ip" default="127.0.0.1"/>
+                <setting label="Port serveru" type="number" id="webserver_port" default="8082"/>
+                <setting label="Počet dnů pro stahovaní EPG zpětně" type="slider" id="epg_dnu_zpetne" range="1,1,7" default="1" option="int"/>
+                <setting label="Počet dnů pro stahovaní EPG dopředu" type="slider" id="epg_dnu_dopredu" range="1,1,7" default="1" option="int"/>
+                <setting label="Interval stahování EPG v hod. (0 = vypnuto)" type="slider" id="interval_stahovani_epg" range="0,1,12" default="0" option="int"/>
+                <setting label="Odstranit HD ze jména kanalů" type="bool" id="odstranit_hd" default="false"/>
+                <setting label="Používat čísla kanálů" type="bool" id="pouzivat_cisla_kanalu" default="false"/>
+                <setting label="Pořadí použité služby" type="slider" id="poradi_sluzby" range="-1,1,3" default="-1" option="int"/>
+                <setting label="Cesta k streamlink (TVheadend)" type="text" id="cesta_streamlink" default="/usr/bin/streamlink"/>
+                <setting label="Cesta k ffmpeg (TVheadend)" type="text" id="cesta_ffmpeg" default="/usr/bin/ffmpeg"/>
+                <setting label="Logování" type="bool" id="debug" default="false"/>
+	</category>
+</settings>

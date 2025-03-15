@@ -1,0 +1,15 @@
+{
+	"username":"",
+	"password":"",
+	"deviceid":"",
+	"webserver_ip":"127.0.0.1",
+	"webserver_port":8082,
+	"epg_dnu_zpetne":1,
+	"epg_dnu_dopredu":1,
+	"interval_stahovani_epg":0,
+	"odstranit_hd":0,
+	"pouzivat_cisla_kanalu":0,
+	"poradi_sluzby":-1,
+	"debug":0,
+	"cesta_ffmpeg":"/usr/bin/ffmpeg"
+}

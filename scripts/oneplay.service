@@ -1,0 +1,12 @@
+[Unit]
+Description=Oneplay Server
+After=network.target
+
+[Service]
+Type=idle
+Restart=on-failure
+User=<uzivatel, pod kterym Oneplay Server ma bezet>
+ExecStart=/usr/bin/python3 <cesta k Oneplay Serveru>/script.oneplay.server/server.py
+
+[Install]
+WantedBy=multi-user.target

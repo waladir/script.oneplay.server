@@ -1,0 +1,89 @@
+# -*- coding: utf-8 -*-
+import os
+import socket
+
+import json
+
+appVersion = '1.0.10'
+
+def is_kodi():
+    try:
+        import xbmc
+        test = int(xbmc.getInfoLabel('System.BuildVersion').split('.')[0])
+        return True
+    except Exception:
+        return False
+
+def get_script_path():
+    path = os.path.realpath(__file__)
+    if path is not None:
+        return path.replace('/resources/lib/utils.py', '').replace('\\resources\\lib\\utils.py', '')
+
+def get_config_value(setting):
+    if is_kodi() == True:
+        import xbmcaddon
+        addon = xbmcaddon.Addon()
+        return addon.getSetting(setting)
+    else:
+        config_file = os.path.join(get_script_path(), 'config.txt')
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            f.close()
+        if setting in config:
+            return config[setting]
+
+def log_message(message):
+    if is_kodi() == True:
+        import xbmc
+        xbmc.log('Oneplay Server > ' + message) 
+    else:
+        print(message)
+
+def display_message(message):
+    if is_kodi() == True:
+        import xbmcgui
+        xbmcgui.Dialog().notification('Oneplay Server', message, xbmcgui.NOTIFICATION_ERROR, 4000)
+    else:
+        print(message)
+
+def save_json_data(file, data):
+    if is_kodi() == True:
+        import xbmcaddon
+        from xbmcvfs import translatePath
+        addon = xbmcaddon.Addon()
+        addon_userdata_dir = translatePath(addon.getAddonInfo('profile'))
+    else:
+        addon_userdata_dir = os.path.join(get_script_path(), 'data')
+    filename = os.path.join(addon_userdata_dir, file['filename'])
+    try:
+        with open(filename, "w") as f:
+            f.write('%s\n' % data)
+    except IOError:
+        display_message('Chyba uložení ' + file['description'])
+
+def load_json_data(file):
+    data = None
+    if is_kodi() == True:
+        import xbmcaddon
+        from xbmcvfs import translatePath
+        addon = xbmcaddon.Addon()
+        addon_userdata_dir = translatePath(addon.getAddonInfo('profile'))
+    else:
+        addon_userdata_dir = os.path.join(get_script_path(), 'data')
+    filename = os.path.join(addon_userdata_dir, file['filename'])
+    try:
+        with open(filename, "r") as f:
+            for row in f:
+                data = row[:-1]
+    except IOError as error:
+        if error.errno != 2:
+            display_message('Chyba při načtení ' + file['description'])
+    return data    
+
+def replace_by_html_entity(string):
+    return string.replace('&','&amp;').replace('<','&lt;').replace('>','&gt;').replace("'","&apos;").replace('"',"&quot;")
+
+def get_ip_address():
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.connect(("8.8.8.8", 80))
+    return s.getsockname()[0]

@@ -1,0 +1,25 @@
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.0.0">
+  <requires>
+    <import addon="xbmc.python" version="3.0.0"/>
+    <import addon="script.module.bottle"/>
+    <import addon="script.module.websocket" version="0.5.8"/>    
+  </requires>
+  <extension library="server.py" point="xbmc.service"/>
+  <extension point="xbmc.addon.metadata">
+    <summary lang="cs_CZ">Oneplay Server</summary>
+    <description lang="cs_CZ">
+Alternativa k IPTV Web Serveru pro Oneplay
+
+Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
+    </description>    
+    <platform>all</platform>
+    <source>https://github.com/waladir/script.oneplay.server</source>
+    <news>
+v1.0.0 (16.3.2025)
+- první verze
+    </news>
+    <assets>
+        <icon>icon.png</icon>
+    </assets>
+  </extension>
+</addon>
