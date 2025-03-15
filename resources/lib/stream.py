@@ -31,8 +31,11 @@ def get_live(id):
     url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
     for asset in data['media']['stream']['assets']:
         if asset['protocol'] == 'hls':
-            if 'clear' in asset['src']:
-                url = asset['src']
+            if 'drm' not in asset:
+                if 'clear' not in asset['src']:
+                    url = asset['src']
+                elif url == 'http://sledovanietv.sk/download/noAccess-cs.m3u8':
+                    url = asset['src']
     return url
 
 def get_archive(channel_name, start_ts, end_ts):
@@ -50,8 +53,10 @@ def get_archive(channel_name, start_ts, end_ts):
             data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
             url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
             for asset in data['media']['stream']['assets']:
-                if asset['protocol'] == 'hls':
-                    if 'clear' in asset['src']:
+                if 'drm' not in asset:
+                    if 'clear' not in asset['src']:
+                        url = asset['src']
+                    elif url == 'http://sledovanietv.sk/download/noAccess-cs.m3u8':
                         url = asset['src']
             return url            
     else:

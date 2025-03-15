@@ -10,7 +10,7 @@ Nainstalujte doplněk a v jeho nastavení vyplňte přihlašovací údaje, devic
 
 <b><u>Samostatný skript</u></b>
 
-Oneplay Server pro své fungování vyžaduje python moduly bottle a websocket. Nainstaluje buď jako balíček OS nebo pomocí pip3 (pip3 install <module>)
+Oneplay Server pro své fungování vyžaduje python moduly bottle a websocket. Nainstaluje buď jako balíček OS nebo pomocí pip3 (pip3 install &lt;module&gt;)
 
 Rozbalte zip, zkopírujte config.txt.sample na config.txt a v něm vyplňte jméno, heslo, deviceid a IP adresu nebo jméno serveru. Server spusťte z adresáře service.oneplay.server spuštěním python3 server.py.<br>
 Pokud chcete Oneplay Server spustit na linuxu se systemd jako službu, jako root/přes sudo:
