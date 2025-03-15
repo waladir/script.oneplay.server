@@ -10,6 +10,8 @@ Nainstalujte doplněk a v jeho nastavení vyplňte přihlašovací údaje, devic
 
 <b><u>Samostatný skript</u></b>
 
+Oneplay Server pro své fungování vyžaduje python moduly bottle a websocket. Nainstaluje buď jako balíček OS nebo pomocí pip3 (pip3 install <module>)
+
 Rozbalte zip, zkopírujte config.txt.sample na config.txt a v něm vyplňte jméno, heslo, deviceid a IP adresu nebo jméno serveru. Server spusťte z adresáře service.oneplay.server spuštěním python3 server.py.<br>
 Pokud chcete Oneplay Server spustit na linuxu se systemd jako službu, jako root/přes sudo:
 - zkopírujte z adresáře scripts soubor oneplay_server.service do /etc/systemd/system/
@@ -35,5 +37,6 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+
 v1.0.0 (14.3.2025)
 - první verze
