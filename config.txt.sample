@@ -10,6 +10,7 @@
 	"odstranit_hd":0,
 	"pouzivat_cisla_kanalu":0,
 	"poradi_sluzby":-1,
+	"pin":"",
 	"debug":0,
 	"cesta_ffmpeg":"/usr/bin/ffmpeg"
 }

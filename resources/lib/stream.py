@@ -26,7 +26,14 @@ def get_live(id):
     for channel in channels:
         if channels[channel]['name'] == id:
             id = channels[channel]['id']
-    post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+    if channels[id]['adult'] == True:
+        if get_config_value('pin') is not None and len(get_config_value('pin')) > 0:
+            pin = get_config_value('pin')
+        else:
+            pin = '1234'
+        post = {"authorization":[{"schema":"PinRequestAuthorization","pin":pin,"type":"parental"}],"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+    else:
+        post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
     url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
     for asset in data['media']['stream']['assets']:
@@ -44,20 +51,29 @@ def get_archive(channel_name, start_ts, end_ts):
     end_ts = int(end_ts)
     token = load_session()
     channel_id = get_channel_id(channel_name)
+    channels = load_channels()
     epg = get_channel_epg(channel_id = channel_id, from_ts = start_ts, to_ts = end_ts + 60*60*12)
     if start_ts in epg:
         if epg[start_ts]['endts'] > int(time.mktime(datetime.now().timetuple()))-10:
             return get_live(channel_name)
         else:
-            post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":epg[start_ts]['id']}},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+            if channels[id]['adult'] == True:
+                if get_config_value('pin') is not None and len(get_config_value('pin')) > 0:
+                    pin = get_config_value('pin')
+                else:
+                    pin = '1234'
+                post = {"authorization":[{"schema":"PinRequestAuthorization","pin":pin,"type":"parental"}],"payload":{"criteria":{"schema":"ContentCriteria","contentId":epg[start_ts]['id']}},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+            else:
+                post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":epg[start_ts]['id']}},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
             data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
             url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
             for asset in data['media']['stream']['assets']:
-                if 'drm' not in asset:
-                    if 'clear' not in asset['src']:
-                        url = asset['src']
-                    elif url == 'http://sledovanietv.sk/download/noAccess-cs.m3u8':
-                        url = asset['src']
+                if asset['protocol'] == 'hls':
+                    if 'drm' not in asset:
+                        if 'clear' not in asset['src']:
+                            url = asset['src']
+                        elif url == 'http://sledovanietv.sk/download/noAccess-cs.m3u8':
+                            url = asset['src']
             return url            
     else:
         return get_live(channel_name)
