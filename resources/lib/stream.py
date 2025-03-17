@@ -57,7 +57,7 @@ def get_archive(channel_name, start_ts, end_ts):
         if epg[start_ts]['endts'] > int(time.mktime(datetime.now().timetuple()))-10:
             return get_live(channel_name)
         else:
-            if channels[id]['adult'] == True:
+            if channels[channel_id]['adult'] == True:
                 if get_config_value('pin') is not None and len(get_config_value('pin')) > 0:
                     pin = get_config_value('pin')
                 else:

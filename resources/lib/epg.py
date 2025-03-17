@@ -37,12 +37,13 @@ def get_day_epg(from_ts, to_ts):
             for item in channel['items']:
                 startts = int(datetime.fromisoformat(item['startAt']).timestamp())
                 endts = int(datetime.fromisoformat(item['endAt']).timestamp())
-                if item['actions'][0]['params']['contentType'] == 'show':
-                    id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
-                else:
-                    id = item['actions'][0]['params']['payload']['contentId']
-                epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel['channelId'], 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
-                epg.update({channel['channelId'] + str(startts) : epg_item})
+                if 'contentType' in item['actions'][0]['params'] or 'contentId' in item['actions'][0]['params']['payload']:
+                    if item['actions'][0]['params']['contentType'] == 'show':
+                        id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
+                    else:
+                        id = item['actions'][0]['params']['payload']['contentId']
+                    epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel['channelId'], 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
+                    epg.update({channel['channelId'] + str(startts) : epg_item})
     return epg
 
 def get_epg():

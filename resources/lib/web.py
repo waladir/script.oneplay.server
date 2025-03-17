@@ -38,9 +38,9 @@ def playlist():
             channel_name = channels[channel]['name']
         output += '#EXTINF:-1 provider="O2TV" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-logo="' + logo + '" catchup-days="7" catchup="append" catchup-source="?start_ts={utc}&end_ts={utcend}", ' + channel_name + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == 'false':
-            output += 'http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u\n'
+            output += 'http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8\n'
         else:
-            output += 'http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u\n'
+            output += 'http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8\n'
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
@@ -66,15 +66,15 @@ def playlist_tvheadend():
             channel_name = channels[channel]['name']
         output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-logo="' + logo + '", ' + channel_name + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == 'false':
-            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
         else:
-            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
 @route('/play/<channel>')
 def play(channel):
-    channel = unquote(channel.replace('.m3u', '')).replace('sleš', '/')
+    channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
     if 'start_ts' in request.query:
         stream = get_archive(channel, request.query['start_ts'], request.query['end_ts'])
     else:
@@ -86,7 +86,7 @@ def play(channel):
 def play_num(channel):
     channels = load_channels()
     for chan in channels:
-        if channels[chan]['channel_number'] == int(channel.replace('.m3u', '')):
+        if channels[chan]['channel_number'] == int(channel.replace('.m3u8', '')):
             channel_name = channels[chan]['name']
     if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == 'true':
         channel_name = channel.replace(' HD', '')
@@ -125,10 +125,10 @@ def page():
     channels = load_channels()
     if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == 'false':
         for channel in channels:
-            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play/' + quote(channels[channel]['name'].replace('/', 'sleš')) + '.m3u', 'logo' : channels[channel]['logo']})
+            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play/' + quote(channels[channel]['name'].replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
     else:
         for channel in channels:
-            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u', 'logo' : channels[channel]['logo']})
+            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'logo' : channels[channel]['logo']})
     TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
     return template('form.tpl', message = message, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist)
 
