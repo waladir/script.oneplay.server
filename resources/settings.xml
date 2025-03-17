@@ -15,7 +15,6 @@
                 <setting label="Odstranit HD ze jména kanalů" type="bool" id="odstranit_hd" default="false"/>
                 <setting label="Používat čísla kanálů" type="bool" id="pouzivat_cisla_kanalu" default="false"/>
                 <setting label="Pořadí použité služby" type="slider" id="poradi_sluzby" range="-1,1,3" default="-1" option="int"/>
-                <setting label="Cesta k streamlink (TVheadend)" type="text" id="cesta_streamlink" default="/usr/bin/streamlink"/>
                 <setting label="Cesta k ffmpeg (TVheadend)" type="text" id="cesta_ffmpeg" default="/usr/bin/ffmpeg"/>
                 <setting label="Logování" type="bool" id="debug" default="false"/>
 	</category>
