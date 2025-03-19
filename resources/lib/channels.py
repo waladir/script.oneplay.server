@@ -8,6 +8,7 @@ from resources.lib.session import load_session
 from resources.lib.utils import load_json_data, save_json_data, display_message
 
 def get_channels():
+    md_channels = [{'name' : 'Oneplay Sport 1', 'count' : 4}, {'name' : 'Oneplay Sport 2', 'count' : 8}, {'name' : 'Oneplay Sport 3', 'count' : 4}, {'name' : 'Oneplay Sport 4', 'count' : 4}]
     channels = {}
     token = load_session()
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.profiles.display', data = None, token = token)
@@ -36,6 +37,13 @@ def get_channels():
             image = None
             imagesq = None
         channels.update({channel['id'] : {'channel_number' : int(channel['order']), 'oneplay_number' : int(channel['order']), 'name' : channel['name'], 'id' : channel['id'], 'logo' : image, 'logosq' : imagesq, 'adult' : channel['adult'] , 'visible' : True}})
+    channel_number = 1000
+    for md_channel in md_channels:
+        for channel in list(channels):
+            if channels[channel]['name'] == md_channel['name']:
+                for num in range(1, md_channel['count'] + 1):
+                    channels.update({channel + '~' + str(num) : {'channel_number' : channel_number, 'oneplay_number' : channel_number, 'name' : md_channel['name'] + ' MD ' + str(num), 'id' :channel + '~' + str(num), 'logo' : channels[channel]['logo'], 'logosq' : channels[channel]['logosq'], 'adult' : channels[channel]['adult'] , 'visible' : True}})        
+                    channel_number = channel_number + 1
     return channels
 
 def load_channels(reset = False):

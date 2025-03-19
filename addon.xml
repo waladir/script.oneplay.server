@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.0.2">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.1.0">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,11 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.1.0 (19.3.2025)
+- přidané kanály pro multidimenzi
+- přidaná podpora pro víc účtů pod jedním loginem
+- dynamické sestavení URL (od Sedlin2)
+
 v1.0.2 (17.3.2025)
 - ošetření chyb v EPG
 - oprava pinu v catchupu

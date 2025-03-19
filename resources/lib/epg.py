@@ -6,11 +6,16 @@ from datetime import datetime
 from resources.lib.api import call_api
 from resources.lib.session import load_session
 from resources.lib.channels import load_channels
-from resources.lib.utils import replace_by_html_entity, get_config_value, display_message, save_json_data, load_json_data
+from resources.lib.utils import replace_by_html_entity, get_config_value, save_json_data, load_json_data
 
 def get_channel_epg(channel_id, from_ts, to_ts):
     token = load_session()
     epg = {}
+    md_stream = -1
+    if '~' in channel_id:
+        channel = channel_id.split('~')
+        channel_id = channel[0]
+        md_stream = int(channel[1])
     post = {"payload":{"criteria":{"channelSetId":"channel_list.1","viewport":{"channelRange":{"from":0,"to":200},"timeRange":{"from":datetime.fromtimestamp(from_ts-3600).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z',"to":datetime.fromtimestamp(to_ts-3600).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z'},"schema":"EpgViewportAbsolute"}},"requestedOutput":{"channelList":"none","datePicker":False,"channelSets":False}}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/epg.display', data = post, token = token)
     if 'err' not in data:
@@ -23,8 +28,26 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                         id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                     else:
                         id = item['actions'][0]['params']['payload']['contentId']
-                    epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel_id, 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
-                    epg.update({startts : epg_item})
+                    if md_stream > 0 and len(item['labels']) > 0 and 'name' in item['labels'][0] and item['labels'][0]['name'] == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension':
+                        stream_number = 1
+                        post = {"payload":{"contentId":id}}
+                        md_data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/page.content.display', data = post, token = token)
+                        for block in md_data['layout']['blocks']:
+                            if block['schema'] == 'TabBlock':
+                                for md_item in block['layout']['blocks'][0]['carousels'][0]['tiles']:
+                                    if md_stream == stream_number:
+                                        md_id = None
+                                        if 'criteria' in md_item['action']['params']['payload'] and 'contentId' in md_item['action']['params']['payload']['criteria']:
+                                            md_id = md_item['action']['params']['payload']['criteria']['contentId']
+                                        elif 'contentId' in md_item['action']['params']['payload']:
+                                            md_id = md_item['action']['params']['payload']['contentId']
+                                        if md_id is not None:
+                                            epg_item = {'id' : md_id, 'title' : md_item['title'], 'channel_id' : channel['channelId'] + '~' + str(stream_number), 'description' : '', 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
+                                            epg.update({startts : epg_item})
+                                    stream_number = stream_number + 1                                        
+                    else:
+                        epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel_id, 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
+                        epg.update({startts : epg_item})
     return epg
 
 def get_day_epg(from_ts, to_ts):
@@ -42,6 +65,22 @@ def get_day_epg(from_ts, to_ts):
                         id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                     else:
                         id = item['actions'][0]['params']['payload']['contentId']
+                    if len(item['labels']) > 0 and 'name' in item['labels'][0] and item['labels'][0]['name'] == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension':
+                        stream_number = 1
+                        post = {"payload":{"contentId":id}}
+                        md_data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/page.content.display', data = post, token = token)
+                        for block in md_data['layout']['blocks']:
+                            if block['schema'] == 'TabBlock':
+                                for md_item in block['layout']['blocks'][0]['carousels'][0]['tiles']:
+                                    md_id = None
+                                    if 'criteria' in md_item['action']['params']['payload'] and 'contentId' in md_item['action']['params']['payload']['criteria']:
+                                        md_id = md_item['action']['params']['payload']['criteria']['contentId']
+                                    elif 'contentId' in md_item['action']['params']['payload']:
+                                        md_id = md_item['action']['params']['payload']['contentId']
+                                    if md_id is not None:
+                                        epg_item = {'id' : md_id, 'title' : md_item['title'], 'channel_id' : channel['channelId'] + '~' + str(stream_number), 'description' : '', 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
+                                        epg.update({channel['channelId'] + '~' + str(stream_number) + str(startts) : epg_item})
+                                    stream_number = stream_number + 1
                     epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel['channelId'], 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
                     epg.update({channel['channelId'] + str(startts) : epg_item})
     return epg

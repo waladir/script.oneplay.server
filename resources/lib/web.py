@@ -23,10 +23,7 @@ def epg():
 def playlist():
     channels = load_channels()
     output = '#EXTM3U\n'
-    ip = get_config_value('webserver_ip')
-    if ip == 'IP':
-        ip = get_ip_address()
-    port = get_config_value('webserver_port')
+    base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
     for channel in channels:
         if channels[channel]['logo'] == None:
             logo = ''
@@ -36,11 +33,11 @@ def playlist():
             channel_name = channels[channel]['name'].replace(' HD', '')
         else:
             channel_name = channels[channel]['name']
-        output += '#EXTINF:-1 provider="O2TV" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-logo="' + logo + '" catchup-days="7" catchup="append" catchup-source="?start_ts={utc}&end_ts={utcend}", ' + channel_name + '\n'
+        output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-logo="' + logo + '" catchup-days="7" catchup="append" catchup-source="?start_ts={utc}&end_ts={utcend}", ' + channel_name + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == 'false':
-            output += 'http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8\n'
+            output += base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8\n'
         else:
-            output += 'http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8\n'
+            output += base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8\n'
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
@@ -105,10 +102,6 @@ def add_image(image):
 @post('/')
 def page():
     message = ''
-    ip = get_config_value('webserver_ip')
-    if ip == 'IP':
-        ip = get_ip_address()
-    port = get_config_value('webserver_port')
     if request.params.get('action') is not None:
         action = request.params.get('action')
         if action == 'reset_channels':
@@ -117,7 +110,7 @@ def page():
         elif action == 'reset_session':
             load_session(reset = True)
             message = 'Sessiona resetována!'
-    base_url = 'http://' + str(ip) + ':' + str(port)
+    base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
     playlist_url = base_url + '/playlist'
     playlist_tvheadend_url = base_url + '/playlist/tvheadend'
     epg_url = base_url + '/epg'

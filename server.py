@@ -50,5 +50,3 @@ else:
             time.sleep(1)
     except KeyboardInterrupt:
         log_message('Ukončení plánovače pro stahování EPG\n')
-
-

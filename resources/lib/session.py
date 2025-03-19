@@ -10,9 +10,35 @@ from resources.lib.utils import get_config_value, display_message, load_json_dat
 def get_token():
     post = {"payload":{"command":{"schema":"LoginWithCredentialsCommand","email":get_config_value('username'),"password":get_config_value('password')}}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.login.step', data = post)
-    if 'err' in data or 'step' not in data or 'bearerToken' not in data['step']:
+    if 'err' in data or 'step' not in data or ('bearerToken' not in data['step'] and data['step']['schema'] != 'ShowAccountChooserStep'):        
         display_message('Problém při přihlášení')
         sys.exit()
+    if data['step']['schema'] == 'ShowAccountChooserStep':
+        accounts = []
+        authToken = data['step']['authToken']
+        for account in data['step']['accounts']:
+            accounts.append(account['accountId'])
+
+        if get_config_value('poradi_sluzby') is None:
+            account_index = -1
+        else:
+            account_index = int(get_config_value('poradi_sluzby'))
+            if account_index > len(accounts):
+                account_index = -1
+        idx = 1
+        accountId = ''
+        for account in accounts:
+            if account_index > 0 and idx == account_index:
+                accountId = account
+            elif account_index == -1:
+                accountId = account
+            idx = idx + 1
+        post = {"payload":{"command":{"schema":"LoginWithAccountCommand","accountId":accountId,"authCode":authToken}}}
+        data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.login.step', data = post)   
+        if 'err' in data or 'step' not in data or 'bearerToken' not in data['step']:
+            display_message('Problém při přihlášení')
+            sys.exit()            
+
     token = data['step']['bearerToken']
     deviceId = data['step']['currentUser']['currentDevice']['id']
     post = {"payload":{"id":deviceId,"name": get_config_value('deviceid')}}
