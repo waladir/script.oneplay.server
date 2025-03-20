@@ -55,6 +55,8 @@ def get_day_epg(from_ts, to_ts):
     epg = {}
     post = {"payload":{"criteria":{"channelSetId":"channel_list.1","viewport":{"channelRange":{"from":0,"to":200},"timeRange":{"from":datetime.fromtimestamp(from_ts).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z',"to":datetime.fromtimestamp(to_ts).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z'},"schema":"EpgViewportAbsolute"}},"requestedOutput":{"channelList":"none","datePicker":False,"channelSets":False}}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/epg.display', data = post, token = token)
+    if 'err' in data:
+        data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/epg.display', data = post, token = token)
     if 'err' not in data:
         for channel in data['schedule']:
             for item in channel['items']:

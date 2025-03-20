@@ -37,6 +37,10 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.1.1 (20.3.2025)
+- opakování stahování EPG při chybě
+- úprava logování ffmpeg pro TVheadend
+
 v1.1.0 (19.3.2025)
 - přidané kanály pro multidimenzi
 - přidaná podpora pro víc účtů pod jedním loginem

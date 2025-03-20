@@ -63,9 +63,9 @@ def playlist_tvheadend():
             channel_name = channels[channel]['name']
         output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-logo="' + logo + '", ' + channel_name + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == 'false':
-            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+            output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
         else:
-            output += 'pipe://' + ffmpeg + ' -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+            output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -i "http://' + str(ip) + ':' + str(port)  + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
