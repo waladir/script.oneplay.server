@@ -1,0 +1,22 @@
+version: "3.8"
+services:
+  oneplay-server:
+    image: oneplay-server
+    ports:
+      - "8082:8082"
+    environment:
+      USERNAME: user
+      PASSWORD: pass
+      DEVICEID: device
+      WEBSERVER_IP: 0.0.0.0
+      WEBSERVER_PORT: 8082
+      EPG_DNU_ZPETNE: 1
+      EPG_DNU_DOPREDU: 1
+      INTERVAL_STAHOVANI_EPG: 0
+      ODSTRANIT_HD: 0
+      POUZIVAT_CISLA_KANALU: 0
+      PORADI_SLUZBY: -1
+      PIN: 4321
+      DEBIG: 0
+      CESTA_FFMPEG: /usr/bin/ffmpeg
+
