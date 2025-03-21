@@ -6,6 +6,21 @@ import json
 
 appVersion = '1.0.10'
 
+def is_docker():
+    # Check for Docker-specific environment variables
+    docker_env_vars = ['container', 'DOCKER']
+    for var in docker_env_vars:
+        if os.getenv(var):
+            return True
+    
+    # Check for Docker-specific filesystem paths
+    docker_paths = ['/proc/1/cgroup', '/.dockerenv']
+    for path in docker_paths:
+        if os.path.exists(path):
+            return True
+    
+    return False
+
 def is_kodi():
     try:
         import xbmc
@@ -24,6 +39,8 @@ def get_config_value(setting):
         import xbmcaddon
         addon = xbmcaddon.Addon()
         return addon.getSetting(setting)
+    elif is_docker() == True:
+        return os.getenv(setting.upper())
     else:
         config_file = os.path.join(get_script_path(), 'config.txt')
         with open(config_file, 'r') as f:
