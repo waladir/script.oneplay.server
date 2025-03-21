@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.1.1">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.1.2">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,7 +15,11 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
-v1.1.1 (20.3.2025)^M
+v1.1.2 (21.3.2025)
+- přidání podpory pro běh v dockeru
+- doplnění tagu do playlistu
+
+v1.1.1 (20.3.2025)
 - opakování stahování EPG při chybě
 - úprava logování ffmpeg pro TVheadend
 
@@ -32,9 +36,6 @@ v1.0.2 (17.3.2025)
 v1.0.1 (16.3.2025)
 - oprava catchupu
 - přidání pinu do nastavení, kvůli přehrávání kanálů chráněných pinem
-
-v1.0.0 (16.3.2025)
-- první verze
     </news>
     <assets>
         <icon>icon.png</icon>
