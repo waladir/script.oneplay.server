@@ -1,4 +1,3 @@
-version: "3.8"
 services:
   oneplay-server:
     image: oneplay-server
@@ -17,6 +16,6 @@ services:
       POUZIVAT_CISLA_KANALU: 0
       PORADI_SLUZBY: -1
       PIN: 4321
-      DEBIG: 0
+      DEBUG: 0
       CESTA_FFMPEG: /usr/bin/ffmpeg
 
