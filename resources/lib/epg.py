@@ -99,7 +99,7 @@ def get_epg():
             logo = channels[id]['logo']
             if logo is None:
                 logo = ''
-            if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == 'true':
+            if get_config_value('odstranit_hd') == 1  or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
                 channel_name = channels[id]['name'].replace(' HD', '')
             else:
                 channel_name = channels[id]['name']

@@ -12,7 +12,7 @@ def get_channel_id(channel_name):
     channels = load_channels()
     channel_id = -1
     for channel in channels:
-        if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == 'true': 
+        if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true': 
             if channels[channel]['name'].replace(' HD', '') == channel_name:
                 channel_id = channel
         else:
