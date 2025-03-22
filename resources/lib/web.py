@@ -8,7 +8,7 @@ from resources.lib.session import load_session
 from resources.lib.channels import load_channels
 from resources.lib.epg import get_epg, load_epg
 from resources.lib.stream import get_live, get_archive
-from resources.lib.utils import get_config_value, get_script_path, get_ip_address
+from resources.lib.utils import get_config_value, get_script_path, get_version
 
 @route('/epg')
 def epg():
@@ -22,9 +22,8 @@ def epg():
 @route('/playlist')
 def playlist():
     channels = load_channels()
-    output = '#EXTM3U\n'
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
-#    output += 'url-tvg="' + base_url + '/epg"\n'
+    output = '#EXTM3U url-tvg="' + base_url + '/epg"\n'
     for channel in channels:
         if channels[channel]['logo'] == None:
             logo = ''
@@ -45,10 +44,9 @@ def playlist():
 @route('/playlist/tvheadend')
 def playlist_tvheadend():
     channels = load_channels()
-    output = '#EXTM3U\n'
-    ffmpeg = get_config_value('cesta_ffmpeg')
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
-#    output += 'url-tvg="' + base_url + '/epg"\n'
+    output = '#EXTM3U url-tvg="' + base_url + '/epg"\n'
+    ffmpeg = get_config_value('cesta_ffmpeg')
     if ffmpeg == None or len(ffmpeg) == 0:
         ffmpeg = '/usr/bin/ffmpeg'
     for channel in channels:
@@ -122,7 +120,7 @@ def page():
         for channel in channels:
             playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'logo' : channels[channel]['logo']})
     TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
-    return template('form.tpl', message = message, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist)
+    return template('form.tpl', version = get_version(), message = message, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist)
 
 def start_server():
     port = int(get_config_value('webserver_port'))

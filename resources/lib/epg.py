@@ -6,7 +6,7 @@ from datetime import datetime
 from resources.lib.api import call_api
 from resources.lib.session import load_session
 from resources.lib.channels import load_channels
-from resources.lib.utils import replace_by_html_entity, get_config_value, save_json_data, load_json_data
+from resources.lib.utils import replace_by_html_entity, get_config_value, save_json_data, load_json_data, display_message
 
 def get_channel_epg(channel_id, from_ts, to_ts):
     token = load_session()
@@ -92,47 +92,47 @@ def get_epg():
     channels = load_channels()
     output = ''
     if len(channels) > 0:
-        # try:
-        output = '<?xml version="1.0" encoding="UTF-8"?>\n'
-        output += '<tv generator-info-name="EPG grabber">\n'
-        for id in channels:
-            logo = channels[id]['logo']
-            if logo is None:
-                logo = ''
-            if get_config_value('odstranit_hd') == 1  or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
-                channel_name = channels[id]['name'].replace(' HD', '')
-            else:
-                channel_name = channels[id]['name']
-            output += '    <channel id="' + replace_by_html_entity(channel_name) + '">\n'
-            output += '            <display-name lang="cs">' +  replace_by_html_entity(channel_name) + '</display-name>\n'
-            output += '            <icon src="' + logo + '" />\n'
-            output += '    </channel>\n'
-        today_date = datetime.today() 
-        today_start_ts = int(time.mktime(datetime(today_date.year, today_date.month, today_date.day) .timetuple()))
-        today_end_ts = today_start_ts + 60*60*24 - 1
-        for day in range(int(get_config_value('epg_dnu_zpetne')) * -1, int(get_config_value('epg_dnu_dopredu')), 1):
-            cnt = 0
-            content = ''
-            epg = get_day_epg(today_start_ts + day*60*60*24, today_end_ts + day*60*60*24)
-            for ts in sorted(epg.keys()):
-                epg_item = epg[ts]
-                starttime = datetime.fromtimestamp(epg_item['startts']).strftime('%Y%m%d%H%M%S')
-                endtime = datetime.fromtimestamp(epg_item['endts']).strftime('%Y%m%d%H%M%S')
-                content = content + '    <programme start="' + starttime + ' +0' + str(tz_offset) + '00" stop="' + endtime + ' +0' + str(tz_offset) + '00" channel="' +  replace_by_html_entity(channels[epg_item['channel_id']]['name']) + '">\n'
-                content = content + '       <title lang="cs">' +  replace_by_html_entity(epg_item['title']) + '</title>\n'
-                if epg_item['description'] != None and len(epg_item['description']) > 0:
-                    content = content + '       <desc lang="cs">' +  replace_by_html_entity(epg_item['description']) + '</desc>\n'
-                content = content + '       <icon src="' + epg_item['poster'] + '"/>\n'
-                content = content + '    </programme>\n'
-                cnt = cnt + 1
-                if cnt > 20:
-                    output += content
-                    content = ''
-                    cnt = 0
-            output += content
-        output += '</tv>\n'
-        # except Exception:
-        #     display_message('Chyba při stahování EPG!')
+        try:
+            output = '<?xml version="1.0" encoding="UTF-8"?>\n'
+            output += '<tv generator-info-name="EPG grabber">\n'
+            for id in channels:
+                logo = channels[id]['logo']
+                if logo is None:
+                    logo = ''
+                if get_config_value('odstranit_hd') == 1  or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
+                    channel_name = channels[id]['name'].replace(' HD', '')
+                else:
+                    channel_name = channels[id]['name']
+                output += '    <channel id="' + replace_by_html_entity(channel_name) + '">\n'
+                output += '            <display-name lang="cs">' +  replace_by_html_entity(channel_name) + '</display-name>\n'
+                output += '            <icon src="' + logo + '" />\n'
+                output += '    </channel>\n'
+            today_date = datetime.today() 
+            today_start_ts = int(time.mktime(datetime(today_date.year, today_date.month, today_date.day) .timetuple()))
+            today_end_ts = today_start_ts + 60*60*24 - 1
+            for day in range(int(get_config_value('epg_dnu_zpetne')) * -1, int(get_config_value('epg_dnu_dopredu')), 1):
+                cnt = 0
+                content = ''
+                epg = get_day_epg(today_start_ts + day*60*60*24, today_end_ts + day*60*60*24)
+                for ts in sorted(epg.keys()):
+                    epg_item = epg[ts]
+                    starttime = datetime.fromtimestamp(epg_item['startts']).strftime('%Y%m%d%H%M%S')
+                    endtime = datetime.fromtimestamp(epg_item['endts']).strftime('%Y%m%d%H%M%S')
+                    content = content + '    <programme start="' + starttime + ' +0' + str(tz_offset) + '00" stop="' + endtime + ' +0' + str(tz_offset) + '00" channel="' +  replace_by_html_entity(channels[epg_item['channel_id']]['name']) + '">\n'
+                    content = content + '       <title lang="cs">' +  replace_by_html_entity(epg_item['title']) + '</title>\n'
+                    if epg_item['description'] != None and len(epg_item['description']) > 0:
+                        content = content + '       <desc lang="cs">' +  replace_by_html_entity(epg_item['description']) + '</desc>\n'
+                    content = content + '       <icon src="' + epg_item['poster'] + '"/>\n'
+                    content = content + '    </programme>\n'
+                    cnt = cnt + 1
+                    if cnt > 20:
+                        output += content
+                        content = ''
+                        cnt = 0
+                output += content
+            output += '</tv>\n'
+        except Exception:
+            display_message('Chyba při stahování EPG!')
     return output                                        
 
 def load_epg(reset = False):

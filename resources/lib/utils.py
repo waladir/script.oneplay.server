@@ -3,6 +3,7 @@ import os
 import socket
 
 import json
+from xml.dom import minidom
 
 appVersion = '1.0.10'
 
@@ -18,7 +19,6 @@ def is_docker():
     for path in docker_paths:
         if os.path.exists(path):
             return True
-    
     return False
 
 def is_kodi():
@@ -39,7 +39,7 @@ def get_config_value(setting):
         import xbmcaddon
         addon = xbmcaddon.Addon()
         return addon.getSetting(setting)
-    elif is_docker() == True:
+    elif is_docker() == True and not os.path.exists(os.path.join(get_script_path(), 'config.txt')):
         defaults = {'WEBSERVER_IP' : '0.0.0.0', 'WEBSERVER_PORT' : 8082, 'EPG_DNU_ZPETNE' : 1, 'EPG_DNU_DOPREDU' : 1, 'INTERVAL_STAHOVANI_EPG' : 0, 'ODSTRANIT_HD' : 0, 'POUZIVAT_CISLA_KANALU' : 0, 'PORADI_SLUZBY' : -1, 'PIN' : '4321', 'DEBUG' : 0, 'CESTA_FFMPEG' : '/usr/bin/ffmpeg'} 
         value = os.getenv(setting.upper())
         if value is None and setting.upper() in defaults:
@@ -108,3 +108,15 @@ def get_ip_address():
     s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     s.connect(("8.8.8.8", 80))
     return s.getsockname()[0]
+
+def get_version():
+    version = ''
+    filename = os.path.join(get_script_path(), 'addon.xml')    
+    try:
+        xml = minidom.parse(filename)
+        addon = xml.getElementsByTagName('addon')
+        for element in addon:
+            version = ' (v.' + element.attributes['version'].value + ')'
+    except IOError as error:
+        return version
+    return version

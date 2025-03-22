@@ -8,7 +8,7 @@
     }   
   </script
   <body>
-    <h2>Oneplay Server</h2>
+    <h2>Oneplay Server{{ version }}</h2>
       Diskuze a podpora k Oneplay Serveru: <a href="https://www.xbmc-kodi.cz/prispevek-oneplay-server">https://www.xbmc-kodi.cz/prispevek-oneplay-server</a>
     <h3><font color="red">{{ message }}</font></h3>
     <form method="post" action="/">
