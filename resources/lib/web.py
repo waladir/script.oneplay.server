@@ -33,7 +33,7 @@ def playlist():
             channel_name = channels[channel]['name'].replace(' HD', '')
         else:
             channel_name = channels[channel]['name']
-        output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '" catchup-days="7" catchup="append" catchup-source="?start_ts={utc}&end_ts={utcend}", ' + channel_name + '\n'
+        output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '" catchup-days="7" catchup="shift", ' + channel_name + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == '0' or get_config_value('pouzivat_cisla_kanalu') == 'false':
             output += base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8\n'
         else:
@@ -71,6 +71,8 @@ def play(channel):
     channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
     if 'start_ts' in request.query:
         stream = get_archive(channel, request.query['start_ts'], request.query['end_ts'])
+    elif 'utc' in request.query:
+        stream = get_archive(channel, request.query['utc'], request.query['lutc'])
     else:
         stream = get_live(channel)
     response.content_type = 'application/x-mpegURL'
@@ -86,6 +88,8 @@ def play_num(channel):
         channel_name = channel.replace(' HD', '')
     if 'start_ts' in request.query:
         stream = get_archive(channel_name, request.query['start_ts'], request.query['end_ts'])
+    elif 'utc' in request.query:
+        stream = get_archive(channel_name, request.query['utc'], request.query['lutc'])
     else:
         stream = get_live(channel_name)
     response.content_type = 'application/x-mpegURL'
