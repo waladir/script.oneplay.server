@@ -23,7 +23,7 @@ def epg():
 def playlist():
     channels = load_channels()
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
-    output = '#EXTM3U url-tvg="' + base_url + '/epg"\n'
+    output = '#EXTM3U x-tvg-url="' + base_url + '/epg"\n'
     for channel in channels:
         if channels[channel]['logo'] == None:
             logo = ''
@@ -45,7 +45,7 @@ def playlist():
 def playlist_tvheadend():
     channels = load_channels()
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
-    output = '#EXTM3U url-tvg="' + base_url + '/epg"\n'
+    output = '#EXTM3U x-tvg-url="' + base_url + '/epg"\n'
     ffmpeg = get_config_value('cesta_ffmpeg')
     if ffmpeg == None or len(ffmpeg) == 0:
         ffmpeg = '/usr/bin/ffmpeg'
