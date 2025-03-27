@@ -39,9 +39,9 @@ def get_live(id):
             pin = get_config_value('pin')
         else:
             pin = '1234'
-        post = {"authorization":[{"schema":"PinRequestAuthorization","pin":pin,"type":"parental"}],"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+        post = {"authorization":[{"schema":"PinRequestAuthorization","pin":pin,"type":"parental"}],"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
     else:
-        post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+        post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
     if md == True and 'liveControl' in data['playerControl'] and 'mosaic' in data['playerControl']['liveControl']:
         stream_number = 1
@@ -53,13 +53,17 @@ def get_live(id):
                 elif 'contentId' in md_item['play']['params']['payload']:
                     md_id = md_item['play']['params']['payload']['contentId']
                 if md_id is not None:
-                    post = {"payload":{"criteria":{"schema":"MDPlaybackCriteria","contentId":md_id,"position":0},"startMode":"live"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
+                    post = {"payload":{"criteria":{"schema":"MDPlaybackCriteria","contentId":md_id,"position":0},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
                     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
                     if 'err' in data or 'media' not in data:
                         url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
                         return url
             stream_number = stream_number + 1
     url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
+    if 'playerControl' in data and 'liveControl' in data['playerControl'] and 'channelId' in data['playerControl']['liveControl'] and 'timeline' in data['playerControl']['liveControl']:
+        if 'timeShift' in data['playerControl']['liveControl']['timeline'] and data['playerControl']['liveControl']['timeline']['timeShift']['available'] == False:
+            post.update({'payload' : {'criteria' : post['payload']['criteria'], 'startMode' : 'live'}})
+            data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
     for asset in data['media']['stream']['assets']:
         if asset['protocol'] == 'hls':
             if 'drm' not in asset:
