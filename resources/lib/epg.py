@@ -67,7 +67,7 @@ def get_day_epg(from_ts, to_ts):
                         id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                     else:
                         id = item['actions'][0]['params']['payload']['contentId']
-                    if len(item['labels']) > 0 and 'name' in item['labels'][0] and item['labels'][0]['name'] == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension':
+                    if len(item['labels']) > 0:
                         stream_number = 1
                         post = {"payload":{"contentId":id}}
                         md_data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/page.content.display', data = post, token = token)
