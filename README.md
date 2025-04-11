@@ -37,7 +37,7 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
-v1.1.6 (11.4.2025)
+v1.1.7 (11.4.2025)
 - ošetření chyb v EPG
 
 v1.1.5 (29.3.2025)
