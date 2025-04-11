@@ -32,7 +32,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                         stream_number = 1
                         post = {"payload":{"contentId":id}}
                         md_data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/page.content.display', data = post, token = token)
-                        if 'err' not in data:                        
+                        if 'err' not in md_data:                        
                             for block in md_data['layout']['blocks']:
                                 if block['schema'] == 'TabBlock':
                                     for md_item in block['layout']['blocks'][0]['carousels'][0]['tiles']:
@@ -72,7 +72,7 @@ def get_day_epg(from_ts, to_ts):
                         stream_number = 1
                         post = {"payload":{"contentId":id}}
                         md_data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/page.content.display', data = post, token = token)
-                        if 'err' not in data:
+                        if 'err' not in md_data:
                             for block in md_data['layout']['blocks']:
                                 if block['schema'] == 'TabBlock':
                                     for md_item in block['layout']['blocks'][0]['carousels'][0]['tiles']:
