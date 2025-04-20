@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.1.8 (20.4.2025)
+- rozšíření MD kanálů pro Oneplay Sport 1 na 8
+
 v1.1.7 (11.4.2025)
 - ošetření chyb v EPG
 
@@ -52,7 +55,3 @@ v1.1.3 (22.3.2025)
 - ošetření chyb při stahování EPG
 - oprava chyby u MD v živém vysílání
 - zobrazení verze
-
-v1.1.2 (21.3.2025)
-- přidání podpory pro běh v dockeru
-- doplnění tagu do playlistu

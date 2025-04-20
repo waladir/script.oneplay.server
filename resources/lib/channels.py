@@ -8,7 +8,7 @@ from resources.lib.session import load_session
 from resources.lib.utils import load_json_data, save_json_data, display_message
 
 def get_channels():
-    md_channels = [{'name' : 'Oneplay Sport 1', 'count' : 4}, {'name' : 'Oneplay Sport 2', 'count' : 8}, {'name' : 'Oneplay Sport 3', 'count' : 4}, {'name' : 'Oneplay Sport 4', 'count' : 4}]
+    md_channels = [{'name' : 'Oneplay Sport 1', 'count' : 8}, {'name' : 'Oneplay Sport 2', 'count' : 8}, {'name' : 'Oneplay Sport 3', 'count' : 4}, {'name' : 'Oneplay Sport 4', 'count' : 4}]
     channels = {}
     token = load_session()
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.profiles.display', data = None, token = token)
