@@ -3,6 +3,7 @@
 	<category label="Přihlášení">
                 <setting label="Login" type="text" id="username" default=""/>
                 <setting label="Heslo" type="text" id="password" option="hidden" enable="!eq(-1,false)" default=""/>
+                <setting label="Profil" type="text" id="profile" default=""/>
                 <setting label="Device Id" type="text" id="deviceid" default=""/>
                 <setting label="PIN" type="text" id="pin" option="hidden" default="4321"/>
         </category>

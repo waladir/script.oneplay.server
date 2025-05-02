@@ -2,6 +2,7 @@
 import os
 import socket
 
+import codecs
 import json
 from xml.dom import minidom
 
@@ -47,7 +48,7 @@ def get_config_value(setting):
         return value
     else:
         config_file = os.path.join(get_script_path(), 'config.txt')
-        with open(config_file, 'r') as f:
+        with codecs.open(config_file, 'r', 'utf-8') as f:
             config = json.load(f)
             f.close()
         if setting in config:
