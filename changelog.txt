@@ -1,5 +1,5 @@
 v1.2.0 (31.5.2025)
-- optimazace stahování EPG
+- optimalizace stahování EPG
 
 v1.1.9 (2.5.2025)
 - přidaná možnost výběru profilu v nastavení

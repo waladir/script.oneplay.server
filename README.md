@@ -38,7 +38,7 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 v1.2.0 (31.5.2025)
-- optimazace stahování EPG
+- optimalizace stahování EPG
 
 v1.1.9 (2.5.2025)
 - přidaná možnost výběru profilu v nastavení
