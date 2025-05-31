@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.2.0 (31.5.2025)
+- optimazace stahování EPG
+
 v1.1.9 (2.5.2025)
 - přidaná možnost výběru profilu v nastavení
 
@@ -48,7 +51,3 @@ v1.1.7 (11.4.2025)
 
 v1.1.5 (29.3.2025)
 - ošetření jiného typu EPG pro MD
-
-v1.1.4 (27.3.2025)
-- změna typu streamu
-- úprava tagu v playlistu a volání catchupu
