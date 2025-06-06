@@ -5,17 +5,22 @@ import time
 
 from resources.lib.api import call_api
 from resources.lib.session import load_session
-from resources.lib.utils import load_json_data, save_json_data, display_message
+from resources.lib.utils import load_json_data, save_json_data, display_message, get_config_value
 
 def get_channels():
     md_channels = [{'name' : 'Oneplay Sport 1', 'count' : 8}, {'name' : 'Oneplay Sport 2', 'count' : 8}, {'name' : 'Oneplay Sport 3', 'count' : 4}, {'name' : 'Oneplay Sport 4', 'count' : 4}]
     channels = {}
     token = load_session()
+
     data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.profiles.display', data = None, token = token)
     if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
         display_message('Problém při načtení profilů')
         sys.exit()
     profileId = None
+    if get_config_value('profile') is not None and len(get_config_value('profile')) > 0:
+        for profile in data['availableProfiles']['profiles']:
+            if profile['profile']['name'] == get_config_value('profile'):
+                profileId = profile['profile']['id']
     for profile in data['availableProfiles']['profiles']:
         if profileId is None:
             profileId = profile['profile']['id']

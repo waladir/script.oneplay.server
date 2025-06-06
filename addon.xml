@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.2.0">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.2.1">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.2.1 (6.6.2025)
+- upravené načítání kanálů v závislosti na vybraném profilu
+
 v1.2.0 (31.5.2025)
 - optimalizace stahování EPG
 
@@ -26,9 +29,6 @@ v1.1.8 (20.4.2025)
 
 v1.1.7 (11.4.2025)
 - ošetření chyb v EPG
-
-v1.1.5 (29.3.2025)
-- ošetření jiného typu EPG pro MD
     </news>
     <assets>
         <icon>icon.png</icon>
