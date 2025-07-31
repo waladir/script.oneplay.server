@@ -41,7 +41,11 @@ def get_channels():
         else:
             image = None
             imagesq = None
-        channels.update({channel['id'] : {'channel_number' : int(channel['order']), 'oneplay_number' : int(channel['order']), 'name' : channel['name'], 'id' : channel['id'], 'logo' : image, 'logosq' : imagesq, 'adult' : channel['adult'] , 'visible' : True}})
+        if 'flags' in channel and 'adult' in channel['flags']:
+            adult = True
+        else:
+            adult = False
+        channels.update({channel['id'] : {'channel_number' : int(channel['order']), 'oneplay_number' : int(channel['order']), 'name' : channel['name'], 'id' : channel['id'], 'logo' : image, 'logosq' : imagesq, 'adult' : adult , 'visible' : True}})
     channel_number = 1000
     for md_channel in md_channels:
         for channel in list(channels):
