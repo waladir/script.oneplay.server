@@ -24,8 +24,12 @@ def get_live(id):
     token = load_session()
     channels = load_channels()
     for channel in channels:
-        if channels[channel]['name'] == id:
-            id = channels[channel]['id']
+        if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true': 
+            if channels[channel]['name'].replace(' HD', '') == id:
+                id = channels[channel]['id']
+        else:
+            if channels[channel]['name'] == id:
+                id = channels[channel]['id']
     if '~' in id:
         md = True
         channel = id.split('~')

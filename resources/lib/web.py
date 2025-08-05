@@ -119,10 +119,18 @@ def page():
     channels = load_channels()
     if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == '0' or get_config_value('pouzivat_cisla_kanalu') == 'false':
         for channel in channels:
-            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play/' + quote(channels[channel]['name'].replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
+            if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
+                channel_name = channels[channel]['name'].replace(' HD', '')
+            else:
+                channel_name = channels[channel]['name']            
+            playlist.append({'name' : channel_name, 'url' : base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
     else:
         for channel in channels:
-            playlist.append({'name' : channels[channel]['name'], 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'logo' : channels[channel]['logo']})
+            if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
+                channel_name = channels[channel]['name'].replace(' HD', '')
+            else:
+                channel_name = channels[channel]['name']            
+            playlist.append({'name' : channel_name, 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'logo' : channels[channel]['logo']})
     TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
     return template('form.tpl', version = get_version(), message = message, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist)
 
