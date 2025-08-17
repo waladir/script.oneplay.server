@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import json
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 
 from resources.lib.api import call_api
 from resources.lib.session import load_session
@@ -92,7 +92,7 @@ def get_day_epg(from_ts, to_ts):
     return epg
 
 def get_epg():
-    tz_offset = int((time.mktime(datetime.now().timetuple())-time.mktime(datetime.utcnow().timetuple()))/3600)
+    tz_offset = int(datetime.now(timezone.utc).astimezone().utcoffset().total_seconds() / 3600)
     channels = load_channels()
     output = ''
     if len(channels) > 0:
