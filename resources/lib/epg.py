@@ -122,21 +122,22 @@ def get_epg():
                     epg_item = epg[ts]
                     starttime = datetime.fromtimestamp(epg_item['startts']).strftime('%Y%m%d%H%M%S')
                     endtime = datetime.fromtimestamp(epg_item['endts']).strftime('%Y%m%d%H%M%S')
-                    if get_config_value('odstranit_hd') == 1  or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
-                        channel_name = channels[epg_item['channel_id']]['name'].replace(' HD', '')
-                    else:
-                        channel_name = channels[epg_item['channel_id']]['name']
-                    content = content + '    <programme start="' + starttime + ' +0' + str(tz_offset) + '00" stop="' + endtime + ' +0' + str(tz_offset) + '00" channel="' +  replace_by_html_entity(channel_name) + '">\n'
-                    content = content + '       <title lang="cs">' +  replace_by_html_entity(epg_item['title']) + '</title>\n'
-                    if epg_item['description'] != None and len(epg_item['description']) > 0:
-                        content = content + '       <desc lang="cs">' +  replace_by_html_entity(epg_item['description']) + '</desc>\n'
-                    content = content + '       <icon src="' + epg_item['poster'] + '"/>\n'
-                    content = content + '    </programme>\n'
-                    cnt = cnt + 1
-                    if cnt > 20:
-                        output += content
-                        content = ''
-                        cnt = 0
+                    if epg_item['channel_id'] in channels:
+                        if get_config_value('odstranit_hd') == 1  or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
+                            channel_name = channels[epg_item['channel_id']]['name'].replace(' HD', '')
+                        else:
+                            channel_name = channels[epg_item['channel_id']]['name']
+                        content = content + '    <programme start="' + starttime + ' +0' + str(tz_offset) + '00" stop="' + endtime + ' +0' + str(tz_offset) + '00" channel="' +  replace_by_html_entity(channel_name) + '">\n'
+                        content = content + '       <title lang="cs">' +  replace_by_html_entity(epg_item['title']) + '</title>\n'
+                        if epg_item['description'] != None and len(epg_item['description']) > 0:
+                            content = content + '       <desc lang="cs">' +  replace_by_html_entity(epg_item['description']) + '</desc>\n'
+                        content = content + '       <icon src="' + epg_item['poster'] + '"/>\n'
+                        content = content + '    </programme>\n'
+                        cnt = cnt + 1
+                        if cnt > 20:
+                            output += content
+                            content = ''
+                            cnt = 0
                 output += content
             output += '</tv>\n'
         except Exception:
