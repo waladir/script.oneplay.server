@@ -37,6 +37,10 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+
+v1.2.8 (10.9.2025)
+- ošetření Canal+ Sport v EPG
+
 v1.2.7 (21.8.2025)
 - odstranění problému s EPG kvůli nedostupným kanálům
 
@@ -48,6 +52,3 @@ v1.2.5 (17.8.2025)
 
 v1.2.4 (17.8.2025)
 - náhrada obsolete funkce utcnow
-
-v1.2.3 (5.8.2025)
-- oprava chování při zapnutém odstraňování HD ze jména kanálů
