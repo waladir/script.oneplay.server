@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.2.8">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.2.9">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.2.9 (14.9.2025)
+- úprava vyhledávání v EPG při catchupu
+
 v1.2.8 (10.9.2025)
 - ošetření Canal+ Sport v EPG
 
@@ -26,9 +29,6 @@ v1.2.6 (18.8.2025)
 
 v1.2.5 (17.8.2025)
 - oprava ostraňování HD v EPG
-
-v1.2.4 (17.8.2025)
-- náhrada obsolete funkce utcnow
     </news>
     <assets>
         <icon>icon.png</icon>

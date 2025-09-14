@@ -38,6 +38,9 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 
+v1.2.9 (14.9.2025)
+- úprava vyhledávání v EPG při catchupu
+
 v1.2.8 (10.9.2025)
 - ošetření Canal+ Sport v EPG
 
@@ -49,6 +52,3 @@ v1.2.6 (18.8.2025)
 
 v1.2.5 (17.8.2025)
 - oprava ostraňování HD v EPG
-
-v1.2.4 (17.8.2025)
-- náhrada obsolete funkce utcnow
