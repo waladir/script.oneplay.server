@@ -19,6 +19,9 @@
       <input type="hidden" name="action" value="reset_session">
       <input type="submit" value="Resetovat session">
     </form>
+    <form action="/config">
+      <input type="submit" value="Konfigurace">
+    </form>
     <hr>
     <p>
     <table>

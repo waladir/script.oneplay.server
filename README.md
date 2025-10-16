@@ -37,6 +37,8 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.3.0 (16.10.2025)
+- přidaný výpis konfigurace
 
 v1.2.9 (14.9.2025)
 - úprava vyhledávání v EPG při catchupu
@@ -49,6 +51,3 @@ v1.2.7 (21.8.2025)
 
 v1.2.6 (18.8.2025)
 - odfiltrování nedostupných promo kanálů
-
-v1.2.5 (17.8.2025)
-- oprava ostraňování HD v EPG

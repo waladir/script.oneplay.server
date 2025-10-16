@@ -99,6 +99,22 @@ def play_num(channel):
 def add_image(image):
     return static_file(image, root = os.path.join(get_script_path(), 'resources', 'templates'))
 
+@route('/config')
+def config():
+    config = {}
+    params = ['username', 'password', 'profile', 'deviceid', 'webserver_ip', 'webserver_port', 'epg_dnu_zpetne', 'epg_dnu_dopredu', 'interval_stahovani_epg', 'odstranit_hd', 'pouzivat_cisla_kanalu', 'poradi_sluzby', 'pin', 'debug', 'cesta_ffmpeg']
+    for param in params:
+        if get_config_value(param) is None:
+            value = 'není'
+        else:
+            value = get_config_value(param)
+        if param == 'password' and value != 'není':
+            config.update({param : '*' * len(value)})
+        else:
+            config.update({param : value})
+    TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
+    return template('config.tpl', version = get_version(), config = config)
+
 @route('/')
 @post('/')
 def page():
