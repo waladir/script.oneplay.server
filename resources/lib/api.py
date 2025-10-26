@@ -12,7 +12,7 @@ def call_api(url, data, token = None):
     headers = {'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0', 'Accept-Encoding' : 'gzip', 'Accept' : '*/*', 'Content-type' : 'application/json;charset=UTF-8'} 
     if token is not None:
         headers['Authorization'] = 'Bearer ' + token
-    if get_config_value('debug') == 1 or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
+    if get_config_value('debug') == 1 or get_config_value('debug') == '1' or get_config_value('debug') == -1 or get_config_value('debug') == '-1' or get_config_value('debug') == 'true':
         log_message(str(url))
         log_message(str(data))
     try:
@@ -38,8 +38,11 @@ def call_api(url, data, token = None):
             ws.close()
             return { 'err' : 'Chyba při volání API' }  
         response = ws.recv()
-        if get_config_value('debug') == 1 or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
-            log_message(str(response))        
+        if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
+            if type(get_config_value('debug')) == int and get_config_value('debug') > 1 and len(str(response)) > get_config_value('debug'):
+                log_message('Odpověď obdržena (' + str(len(str(response))) + ')')
+            else:
+                log_message(str(response))        
         if response and len(response) > 0:
             data = json.loads(response)
             if 'response' not in data or 'result' not in data['response'] or 'status' not in data['response']['result'] or data['response']['result']['status'] != 'Ok' or data['response']['context']['requestId'] != requestId:

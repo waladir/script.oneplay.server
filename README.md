@@ -37,6 +37,11 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.3.1 (27.10.2025)
+- aktualizace Dockerfile (od @sedlin2)
+- pro neKodi verzi při nastavení debug větší než 1 nebude logovat odpovědi delší než zadaná hodnota (např. pro 5000 se nebudou logovat odpovědi delší než 5000 B)
+- do playlistu přidané parametry pro ISA (řeší problém s přehráváním některých kanálů v IPTV SC)
+
 v1.3.0 (16.10.2025)
 - přidaný výpis konfigurace
 
@@ -48,6 +53,3 @@ v1.2.8 (10.9.2025)
 
 v1.2.7 (21.8.2025)
 - odstranění problému s EPG kvůli nedostupným kanálům
-
-v1.2.6 (18.8.2025)
-- odfiltrování nedostupných promo kanálů

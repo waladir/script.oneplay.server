@@ -1,3 +1,8 @@
+v1.3.1 (27.10.2025)
+- aktualizace Dockerfile (od @sedlin2)
+- pro neKodi verzi při nastavení debug větší než 1 nebude logovat odpovědi delší než zadaná hodnota (např. pro 5000 se nebudou logovat odpovědi delší než 5000 B)
+- do playlistu přidané parametry pro ISA (řeší problém s přehráváním některých kanálů v IPTV SC)
+
 v1.3.0 (16.10.2025)
 - přidaný výpis konfigurace
 
@@ -9,6 +14,3 @@ v1.2.7 (21.8.2025)
 
 v1.2.6 (18.8.2025)
 - odfiltrování nedostupných promo kanálů
-
-v1.2.5 (17.8.2025)
-- oprava ostraňování HD v EPG

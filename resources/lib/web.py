@@ -21,6 +21,8 @@ def epg():
 
 @route('/playlist')
 def playlist():
+    from urllib.parse import urlencode
+    headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0', 'Accept-Encoding' : 'gzip, deflate, br, zstd', 'Accept' : '*/*'}
     channels = load_channels()
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
     output = '#EXTM3U x-tvg-url="' + base_url + '/epg"\n'
@@ -34,6 +36,8 @@ def playlist():
         else:
             channel_name = channels[channel]['name']
         output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '" catchup-days="7" catchup="shift", ' + channel_name + '\n'
+        output += '#KODIPROP:inputstream.adaptive.stream_headers=' + urlencode(headers) + '\n'
+        output += '#KODIPROP:inputstream.adaptive.manifest_headers=' + urlencode(headers) + '\n'
         if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == '0' or get_config_value('pouzivat_cisla_kanalu') == 'false':
             output += base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8\n'
         else:
