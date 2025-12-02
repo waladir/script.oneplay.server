@@ -46,7 +46,7 @@ def get_live(id):
         post = {"authorization":[{"schema":"PinRequestAuthorization","pin":pin,"type":"parental"}],"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
     else:
         post = {"payload":{"criteria":{"schema":"ContentCriteria","contentId":"channel." + id},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/content.play', data = post, token = token)
+    data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/content.play', data = post, token = token)
     if md == True and 'liveControl' in data['playerControl'] and 'mosaic' in data['playerControl']['liveControl']:
         stream_number = 1
         for md_item in data['playerControl']['liveControl']['mosaic']['items']:

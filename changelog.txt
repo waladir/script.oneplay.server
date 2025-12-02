@@ -1,3 +1,6 @@
+v1.3.3 (2.12.2025)
+- přidání výběru profilu, pokud není nastavený
+
 v1.3.2 (2.12.2025)
 - změna API Oneplay
 
@@ -11,7 +14,3 @@ v1.3.0 (16.10.2025)
 
 v1.2.8 (10.9.2025)
 - ošetření Canal+ Sport v EPG
-
-v1.2.7 (21.8.2025)
-- odstranění problému s EPG kvůli nedostupným kanálům
-

@@ -52,20 +52,20 @@ def get_token():
         if device['id'] != deviceId and device['name'] ==  get_config_value('deviceid'):
             post = {"payload":{"criteria":{"schema":"UserDeviceIdCriteria","id":device['id']}}}
             data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.device.remove', data = post, token = token)
-    if get_config_value('profile') is not None and len(get_config_value('profile')) > 0:
-        data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profiles.display', data = None, token = token)
-        if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
-            display_message('Problém při přihlášení')
-            sys.exit()
-        for profile in data['availableProfiles']['profiles']:
-            if profile['profile']['name'] == get_config_value('profile'):
-                post = {"payload":{"profileId":profile['profile']['id']}}
-                data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profile.select', data = post, token = token)
-                if 'err' in data or 'bearerToken' not in data:
-                    display_message('Problém při přihlášení')
-                    sys.exit()
-                display_message('Profil: ' + profile['profile']['name'])
-                token = data['bearerToken']
+    data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profiles.display', data = None, token = token)
+    if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
+        display_message('Problém při přihlášení')
+        sys.exit()
+    for profile in data['availableProfiles']['profiles']:
+        if profile['profile']['name'] == get_config_value('profile') or get_config_value('profile') is None or len(get_config_value('profile')) == 0:
+            post = {"payload":{"profileId":profile['profile']['id']}}
+            data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profile.select', data = post, token = token)
+            if 'err' in data or 'bearerToken' not in data:
+                display_message('Problém při přihlášení')
+                sys.exit()
+            display_message('Profil: ' + profile['profile']['name'])
+            token = data['bearerToken']
+            return token
     return token
 
 def load_session(reset = False):
