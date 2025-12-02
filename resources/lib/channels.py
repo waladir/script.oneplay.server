@@ -12,7 +12,7 @@ def get_channels():
     channels = {}
     token = load_session()
 
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/user.profiles.display', data = None, token = token)
+    data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profiles.display', data = None, token = token)
     if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
         display_message('Problém při načtení profilů')
         sys.exit()
@@ -26,7 +26,7 @@ def get_channels():
             profileId = profile['profile']['id']
 
     post = {"payload":{"profileId":str(profileId)}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/v3/epg.channels.display', data = post, token = token)
+    data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/epg.channels.display', data = post, token = token)
     if 'err' in data or 'channelList' not in data:
         display_message('Problém při načtení kanálů')
         sys.exit()

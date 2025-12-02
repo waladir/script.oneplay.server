@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.1">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.2">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,7 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
-
+v1.3.2 (2.12.2025)
+- změna API Oneplay
+	    
 v1.3.1 (27.10.2025)
 - aktualizace Dockerfile (od @sedlin2)
 - pro neKodi verzi při nastavení debug větší než 1 nebude logovat odpovědi delší než zadaná hodnota (např. pro 5000 se nebudou logovat odpovědi delší než 5000 B)
@@ -29,9 +31,6 @@ v1.2.9 (14.9.2025)
 
 v1.2.8 (10.9.2025)
 - ošetření Canal+ Sport v EPG
-
-v1.2.7 (21.8.2025)
-- odstranění problému s EPG kvůli nedostupným kanálům
     </news>
     <assets>
         <icon>icon.png</icon>
