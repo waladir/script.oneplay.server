@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.2">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.3">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,7 +15,7 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
-v1.3.2 (2.12.2025)
+v1.3.2/3 (2.12.2025)
 - změna API Oneplay
 	    
 v1.3.1 (27.10.2025)
