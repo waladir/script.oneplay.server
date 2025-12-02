@@ -15,7 +15,7 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
-v1.3.2/3 (2.12.2025)
+v1.3.2 (2.12.2025)
 - změna API Oneplay
 	    
 v1.3.1 (27.10.2025)
