@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.3">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.4">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
