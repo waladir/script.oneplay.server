@@ -90,7 +90,7 @@ def load_session(reset = False):
     return token
 
 def save_session(token):
-    data = json.dumps({'token' : token, 'valid_to' : int(time.time() + 60*60*24)})        
+    data = json.dumps({'token' : token, 'valid_to' : int(time.time() + 60*60*4)})        
     save_json_data({'filename' : 'session.txt', 'description' : 'session'}, data)
 
 
