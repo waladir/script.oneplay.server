@@ -58,7 +58,7 @@ def get_live(id):
                     md_id = md_item['play']['params']['payload']['contentId']
                 if md_id is not None:
                     post = {"payload":{"criteria":{"schema":"MDPlaybackCriteria","contentId":md_id,"position":0},"startMode":"start"},"playbackCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","subtitle":{"formats":["vtt"],"locations":["InstreamTrackLocation","ExternalTrackLocation"]},"liveSpecificCapabilities":{"protocols":["dash","hls"],"drm":["widevine","fairplay"],"altTransfer":"Unicast","multipleAudio":False}}}
-                    data = call_api(url = 'https://http.cms.jyxo.cz/api/1.6/content.play', data = post, token = token)
+                    data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/content.play', data = post, token = token)
                     if 'err' in data or 'media' not in data:
                         url = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
                         return url

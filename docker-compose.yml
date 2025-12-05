@@ -16,6 +16,7 @@ services:
       POUZIVAT_CISLA_KANALU: 0
       PORADI_SLUZBY: -1
       PIN: 4321
+      PROFILE_PIN: 4321
       DEBUG: 0
       CESTA_FFMPEG: /usr/bin/ffmpeg
 

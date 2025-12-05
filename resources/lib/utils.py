@@ -41,7 +41,7 @@ def get_config_value(setting):
         addon = xbmcaddon.Addon()
         return addon.getSetting(setting)
     elif is_docker() == True and not os.path.exists(os.path.join(get_script_path(), 'config.txt')):
-        defaults = {'WEBSERVER_IP' : '0.0.0.0', 'WEBSERVER_PORT' : 8082, 'EPG_DNU_ZPETNE' : 1, 'EPG_DNU_DOPREDU' : 1, 'INTERVAL_STAHOVANI_EPG' : 0, 'ODSTRANIT_HD' : 0, 'POUZIVAT_CISLA_KANALU' : 0, 'PORADI_SLUZBY' : -1, 'PIN' : '4321', 'DEBUG' : 0, 'CESTA_FFMPEG' : '/usr/bin/ffmpeg'} 
+        defaults = {'WEBSERVER_IP' : '0.0.0.0', 'WEBSERVER_PORT' : 8082, 'EPG_DNU_ZPETNE' : 1, 'EPG_DNU_DOPREDU' : 1, 'INTERVAL_STAHOVANI_EPG' : 0, 'ODSTRANIT_HD' : 0, 'POUZIVAT_CISLA_KANALU' : 0, 'PORADI_SLUZBY' : -1, 'PIN' : '4321', 'PROFILE_PIN' : '4321', 'DEBUG' : 0, 'CESTA_FFMPEG' : '/usr/bin/ffmpeg'} 
         value = os.getenv(setting.upper())
         if value is None and setting.upper() in defaults:
             value = defaults[setting.upper()]

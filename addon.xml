@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.4">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.5">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,10 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.3.5 (5.12.2025)
+- oprava přehrávání multidimenze
+- možnost nastavit profilový pin
+
 v1.3.4 (4.12.2025)
 - zkrácení platnosti session na 4 hodiny
 
@@ -28,9 +32,6 @@ v1.3.1 (27.10.2025)
 - aktualizace Dockerfile (od @sedlin2)
 - pro neKodi verzi při nastavení debug větší než 1 nebude logovat odpovědi delší než zadaná hodnota (např. pro 5000 se nebudou logovat odpovědi delší než 5000 B)
 - do playlistu přidané parametry pro ISA (řeší problém s přehráváním některých kanálů v IPTV SC)
-
-v1.3.0 (16.10.2025)
-- přidaný výpis konfigurace
     </news>
     <assets>
         <icon>icon.png</icon>
