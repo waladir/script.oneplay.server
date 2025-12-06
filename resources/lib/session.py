@@ -58,8 +58,8 @@ def get_token():
         sys.exit()
     for profile in data['availableProfiles']['profiles']:
         if profile['profile']['name'] == get_config_value('profile') or get_config_value('profile') is None or len(get_config_value('profile')) == 0:
-            if get_config_value('pin') is not None and len(get_config_value('pin')) > 0 and get_config_value('pin') != '4321':
-                post = {"payload":{"profileId":profile['profile']['id']},"authorization":[{"schema":"PinRequestAuthorization","pin":get_config_value('pin'),"type":"profile"}]}
+            if get_config_value('profile_pin') is not None and len(get_config_value('profile_pin')) > 0 and get_config_value('profile_pin') != '4321':
+                post = {"payload":{"profileId":profile['profile']['id']},"authorization":[{"schema":"PinRequestAuthorization","pin":get_config_value('profile_pin'),"type":"profile"}]}
             else:
                 post = {"payload":{"profileId":profile['profile']['id']}}
             data = call_api(url = 'https://http.cms.jyxo.cz/api/v1.6/user.profile.select', data = post, token = token)
