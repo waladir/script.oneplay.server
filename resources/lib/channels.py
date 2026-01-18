@@ -31,7 +31,7 @@ def get_channels():
         display_message('Problém při načtení kanálů')
         sys.exit()
     for channel in data['channelList']:
-        if 'upsell' not in channel or channel['upsell'] == False:
+        if ('upsell' not in channel or channel['upsell'] == False) and ('flags' not in channel or 'upsell' not in channel['flags']):
             image = None
             imagesq = None
             if len(channel['logo']) > 1:
@@ -57,6 +57,7 @@ def get_channels():
     return channels
 
 def load_channels(reset = False):
+    valid_to = -1
     channels = {}
     if reset == True:
         channels = get_channels()

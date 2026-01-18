@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.3.7 (18.1.2026)
+- změna filtrování upsell kanálů
+
 v1.3.6 (6.12.2025)
 - oprava výběru profilu s PINem
 
@@ -49,6 +52,3 @@ v1.3.4 (4.12.2025)
 
 v1.3.3 (2.12.2025)
 - přidání výběru profilu, pokud není nastavený
-
-v1.3.2 (2.12.2025)
-- změna API Oneplay
