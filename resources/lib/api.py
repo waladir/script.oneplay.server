@@ -33,23 +33,45 @@ def call_api(url, data, token = None):
             data = response.read()
         if len(data) > 0:
             data = json.loads(data)
-        if 'result' not in data or 'status' not in data['result'] or data['result']['status'] != 'Ok':
+
+        if 'result' not in data or 'status' not in data['result'] or data['result']['status'] not in ['OkAsync', 'Ok']:
             log_message('Chyba při volání '+ str(url))
             ws.close()
             return { 'err' : 'Chyba při volání API' }  
-        ws.close()
-        if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
-            if type(get_config_value('debug')) == int and get_config_value('debug') > 1 and len(str(data)) > get_config_value('debug'):
-                log_message('Odpověď obdržena (' + str(len(str(data))) + ')')
+        if data['result']['status'] == 'OkAsync':
+            response = ws.recv()
+            if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
+                if type(get_config_value('debug')) == int and get_config_value('debug') > 1 and len(str(response)) > get_config_value('debug'):
+                    log_message('Odpověď obdržena (' + str(len(str(response))) + ')')
+                else:
+                    log_message(str(response))        
+            if response and len(response) > 0:
+                data = json.loads(response)
+                if 'response' not in data or 'result' not in data['response'] or 'status' not in data['response']['result'] or data['response']['result']['status'] != 'Ok' or data['response']['context']['requestId'] != requestId:
+                    log_message('Chyba při volání '+ str(url))
+                    ws.close()
+                    return { 'err' : 'Chyba při volání API' }  
+                ws.close()
+                if 'data' in data['response']:
+                    return data['response']['data']
+                return []
             else:
-                log_message(str(data))        
-        if 'result' not in data or 'status' not in data['result'] or data['result']['status'] != 'Ok' or data['context']['requestId'] != requestId:
-            log_message('Chyba při volání '+ str(url))
-            return { 'err' : 'Chyba při volání API' }
-        else:
-            if 'data' in data:
-                return data['data']
-        return []
+                ws.close()
+                return []
+        elif data['result']['status'] == 'Ok':
+            ws.close()
+            if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
+                if type(get_config_value('debug')) == int and get_config_value('debug') > 1 and len(str(data)) > get_config_value('debug'):
+                    log_message('Odpověď obdržena (' + str(len(str(data))) + ')')
+                else:
+                    log_message(str(data))        
+            if 'result' not in data or 'status' not in data['result'] or data['result']['status'] != 'Ok' or data['context']['requestId'] != requestId:
+                log_message('Chyba při volání '+ str(url))
+                return { 'err' : 'Chyba při volání API' }
+            else:
+                if 'data' in data:
+                    return data['data']
+            return []
     except HTTPError as e:
         log_message('Chyba při volání '+ str(url) + ': ' + e.reason)
         ws.close()
