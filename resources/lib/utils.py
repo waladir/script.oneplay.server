@@ -6,7 +6,7 @@ import codecs
 import json
 from xml.dom import minidom
 
-appVersion = '1.0.10'
+appVersion = 'R8.14'
 
 def is_docker():
     # Check for Docker-specific environment variables

@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.7">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.3.8">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.3.8 (9.3.2026)
+- změna volání API Oneplay
+
 v1.3.7 (18.1.2026)
 - změna filtrování upsell kanálů
 
@@ -27,9 +30,6 @@ v1.3.5 (5.12.2025)
 
 v1.3.4 (4.12.2025)
 - zkrácení platnosti session na 4 hodiny
-
-v1.3.3 (2.12.2025)
-- přidání výběru profilu, pokud není nastavený
     </news>
     <assets>
         <icon>icon.png</icon>
