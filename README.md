@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.4.1 (31.3.2026)
+- oprava intervalu pro generování EPG v Kodi
+
 v1.4.0 (14.3.2026)
 - změna typu live streamu
 
@@ -48,6 +51,3 @@ v1.3.8 (9.3.2026)
 
 v1.3.7 (18.1.2026)
 - změna filtrování upsell kanálů
-
-v1.3.6 (6.12.2025)
-- oprava výběru profilu s PINem

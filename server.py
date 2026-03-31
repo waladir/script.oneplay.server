@@ -32,7 +32,7 @@ if is_kodi() == True:
             if get_config_value('username') and len(get_config_value('username')) > 0 and get_config_value('password') and len(get_config_value('password')) > 0:
                 if int(get_config_value('interval_stahovani_epg')) > 0:
                     load_epg(reset = True)
-                    interval = int(get_config_value('interval_stahovani_epg'))*60
+                    interval = int(get_config_value('interval_stahovani_epg'))*60*60
                     next = time.time() + float(interval)
         time.sleep(1)
 else:
