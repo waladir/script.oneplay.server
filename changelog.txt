@@ -1,3 +1,6 @@
+v1.4.2 (31.3.2026)
+- změna verze API
+
 v1.4.1 (31.3.2026)
 - oprava intervalu pro generování EPG v Kodi
 
@@ -9,6 +12,3 @@ v1.3.9 (9.3.2026)
 
 v1.3.8 (9.3.2026)
 - změna volání API Oneplay
-
-v1.3.7 (18.1.2026)
-- změna filtrování upsell kanálů

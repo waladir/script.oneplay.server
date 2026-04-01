@@ -7,6 +7,7 @@ import json
 from xml.dom import minidom
 
 appVersion = 'R8.14'
+api_version = 'v1.8'
 
 def is_docker():
     # Check for Docker-specific environment variables
