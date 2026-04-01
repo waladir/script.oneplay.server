@@ -24,7 +24,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                 for item in channel['items']:
                     startts = int(datetime.fromisoformat(item['startAt']).timestamp())
                     endts = int(datetime.fromisoformat(item['endAt']).timestamp())
-                    if item['actions'][0]['params']['contentType'] in ['show','movie']:
+                    if item['actions'][0]['params']['contentType'] in ['show','movie'] and 'contentId' not in item['actions'][0]['params']['payload']:
                         id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                     else:
                         id = item['actions'][0]['params']['payload']['contentId']
@@ -66,7 +66,7 @@ def get_day_epg(from_ts, to_ts):
                     startts = int(datetime.fromisoformat(item['startAt']).timestamp())
                     endts = int(datetime.fromisoformat(item['endAt']).timestamp())
                     if 'contentType' in item['actions'][0]['params'] or 'contentId' in item['actions'][0]['params']['payload']:
-                        if item['actions'][0]['params']['contentType'] == 'show':
+                        if item['actions'][0]['params']['contentType'] == 'show'  and 'contentId' not in item['actions'][0]['params']['payload']:
                             id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                         else:
                             id = item['actions'][0]['params']['payload']['contentId']
