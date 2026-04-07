@@ -28,6 +28,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                         id = item['actions'][0]['params']['payload']['deeplink']['epgItem']
                     else:
                         id = item['actions'][0]['params']['payload']['contentId']
+                    payload = item['actions'][0]['params']['payload']
                     if md_stream > 0 and len(item['labels']) > 0 and 'name' in item['labels'][0] and item['labels'][0]['name'] == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension':
                         stream_number = 1
                         post = {"payload":{"contentId":id}}
@@ -47,7 +48,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                                                 epg.update({startts : epg_item})
                                         stream_number = stream_number + 1                                        
                     else:
-                        epg_item = {'id' : id, 'title' : item['title'], 'channel_id' : channel_id, 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
+                        epg_item = {'id' : id, 'payload': payload, 'title' : item['title'], 'channel_id' : channel_id, 'description' : item['description'], 'startts' : startts, 'endts' : endts, 'cover' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320'), 'poster' : item['image'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')}
                         epg.update({startts : epg_item})
     return epg
 
