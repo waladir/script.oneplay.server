@@ -33,11 +33,10 @@ def call_api(url, data, token = None):
             data = response.read()
         if len(data) > 0:
             data = json.loads(data)
-
         if 'result' not in data or 'status' not in data['result'] or data['result']['status'] not in ['OkAsync', 'Ok']:
             log_message('Chyba při volání '+ str(url))
             ws.close()
-            return { 'err' : 'Chyba při volání API' }  
+            return {'result': {'status': 'Error', 'message': data.get('result', {}).get('message', 'Chyba při volání API')}}  
         if data['result']['status'] == 'OkAsync':
             response = ws.recv()
             if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':

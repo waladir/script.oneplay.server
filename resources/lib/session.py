@@ -45,14 +45,19 @@ def get_token():
     data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.device.change', data = post, token = token)
     post = {"payload":{"screen":"devices"}}
     data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/setting.display', data = post, token = token)
-    if 'err' in data or 'screen' not in data or 'userDevices' not in data['screen']:
+    devices = {}
+    for block in data.get('screen', {}).get('blocks', []):
+        if block['schema'] == 'SettingUserDevicesBlock':
+            devices = block.get('devices', {}).get('devices')
+    if 'err' in data:
         display_message('Problém při přihlášení')
         sys.exit()
-    for device in data['screen']['userDevices']['devices']:
+    for device in devices:
         if device['id'] != deviceId and device['name'] ==  get_config_value('deviceid'):
             post = {"payload":{"criteria":{"schema":"UserDeviceIdCriteria","id":device['id']}}}
             data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.device.remove', data = post, token = token)
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.profiles.display', data = None, token = token)
+
+    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.profiles.display', data = {"payload": {"mode": "change"}}, token = token)
     if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
         display_message('Problém při přihlášení')
         sys.exit()
