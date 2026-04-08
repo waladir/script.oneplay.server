@@ -2,7 +2,9 @@ name: Build Multi-arch (Linked to Repo)
 
 on:
   workflow_dispatch:
-
+  push:
+    branches:
+      - master
 env:
   REGISTRY: ghcr.io
 
