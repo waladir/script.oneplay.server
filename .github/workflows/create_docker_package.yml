@@ -1,57 +1,46 @@
-name: Build Multi-arch (Linked to Repo)
+name: Auto Tag on Changelog Change
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
     paths:
       - changelog.txt
 
-env:
-  REGISTRY: ghcr.io
-
 jobs:
-  build-and-push:
-    name: Build and Push Multi-arch Docker Image
+  tag:
+    name: Create Git Tag from Changelog
     runs-on: ubuntu-latest
     permissions:
-      contents: read
-      packages: write
+      contents: write
 
     steps:
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
-
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Log in to the Container registry
-        uses: docker/login-action@v3
         with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
 
-      - name: Extract metadata (tags, labels)
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ format('{0}/{1}', env.REGISTRY, github.repository) }}
-          tags: |
-            type=raw,value=latest
+      - name: Get version from changelog
+        id: get_version
+        run: |
+          VERSION=$(sed -n '1{s/[[:space:]].*$//;p;}' changelog.txt)
+          if [ -z "$VERSION" ]; then
+            echo "No version found on the first line of changelog.txt" >&2
+            exit 1
+          fi
+          echo "new_tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VERSION"
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v6
-        with:
-          context: .
-          push: true
-          platforms: linux/amd64,linux/arm64
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          provenance: false
-          build-args: |
-            VERSION=${{ github.sha }}
+      - name: Create and push tag
+        run: |
+          TAG='${{ steps.get_version.outputs.new_tag }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping."
+            exit 0
+          fi
+
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG"
