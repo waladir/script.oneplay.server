@@ -1,0 +1,46 @@
+name: Auto Tag on Changelog Change
+
+on:
+  push:
+    branches:
+      - master
+    paths:
+      - changelog.txt
+
+jobs:
+  tag:
+    name: Create Git Tag from Changelog
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get version from changelog
+        id: get_version
+        run: |
+          VERSION=$(sed -n '1{s/[[:space:]].*$//;p;}' changelog.txt)
+          if [ -z "$VERSION" ]; then
+            echo "No version found on the first line of changelog.txt" >&2
+            exit 1
+          fi
+          echo "new_tag=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "Detected version: $VERSION"
+
+      - name: Create and push tag
+        run: |
+          TAG='${{ steps.get_version.outputs.new_tag }}'
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG already exists, skipping."
+            exit 0
+          fi
+
+          git tag "$TAG" "$GITHUB_SHA"
+          git push origin "refs/tags/$TAG"
