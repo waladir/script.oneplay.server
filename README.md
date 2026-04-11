@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.5.0 (10.4.2026)
+- nová webová stránka (od sedlin2)
+
 v1.4.5 (7.4.2026)
 - oprava catchupu
 
@@ -48,6 +51,3 @@ v1.4.3 (1.4.2026)
 
 v1.4.2 (1.4.2026)
 - změna verze API
-
-v1.4.1 (31.3.2026)
-- oprava intervalu pro generování EPG v Kodi

@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.5.0 (10.4.2026)
+- nová webová stránka (od sedin2)
+
 v1.4.5 (7.4.2026)
 - oprava catchupu
 
@@ -26,9 +29,6 @@ v1.4.3 (1.4.2026)
 
 v1.4.2 (1.4.2026)
 - změna verze API
-
-v1.4.1 (31.3.2026)
-- oprava intervalu pro generování EPG v Kodi
     </news>
     <assets>
         <icon>icon.png</icon>
