@@ -70,6 +70,15 @@ def playlist_tvheadend():
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
+@route('/stream_url/<channel>')
+def stream_url(channel):
+    import json
+    channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
+    url = get_live(channel)
+    response.content_type = 'application/json'
+    response.set_header('Access-Control-Allow-Origin', '*')
+    return json.dumps({'url': url})
+
 @route('/play/<channel>')
 def play(channel):
     channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
@@ -105,6 +114,7 @@ def add_image(image):
 
 @route('/config')
 def config():
+    import json
     config = {}
     params = ['username', 'password', 'profile', 'deviceid', 'webserver_ip', 'webserver_port', 'epg_dnu_zpetne', 'epg_dnu_dopredu', 'interval_stahovani_epg', 'odstranit_hd', 'pouzivat_cisla_kanalu', 'poradi_sluzby', 'pin', 'debug', 'cesta_ffmpeg']
     for param in params:
@@ -116,8 +126,8 @@ def config():
             config.update({param : '*' * len(value)})
         else:
             config.update({param : value})
-    TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
-    return template('config.tpl', version = get_version(), config = config)
+    response.content_type = 'application/json'
+    return json.dumps(config)
 
 @route('/')
 @post('/')
@@ -143,14 +153,14 @@ def page():
                 channel_name = channels[channel]['name'].replace(' HD', '')
             else:
                 channel_name = channels[channel]['name']            
-            playlist.append({'name' : channel_name, 'url' : base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
+            playlist.append({'name' : channel_name, 'url' : base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'slug' : quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
     else:
         for channel in channels:
             if get_config_value('odstranit_hd') == 1 or get_config_value('odstranit_hd') == '1' or get_config_value('odstranit_hd') == 'true':
                 channel_name = channels[channel]['name'].replace(' HD', '')
             else:
                 channel_name = channels[channel]['name']            
-            playlist.append({'name' : channel_name, 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'logo' : channels[channel]['logo']})
+            playlist.append({'name' : channel_name, 'url' : base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'slug' : quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo']})
     TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
     return template('form.tpl', version = get_version(), message = message, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist)
 

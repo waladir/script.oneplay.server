@@ -1,28 +1,63 @@
-name: Build Multi-arch (Linked to Repo)
+name: Docker Build Multi-arch (Auto-tag from Changelog)
 
 on:
-  workflow_dispatch:
   push:
     branches:
       - master
     paths:
-      - changelog.txt
+      - 'changelog.txt'
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
 
 jobs:
-  build-and-push:
-    name: Build and Push Multi-arch Docker Image
+  tag-and-build:
+    name: Create Tag and Push Docker Image
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       packages: write
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
+      # 1. Získání verze a odstranění prvního znaku (v)
+      - name: Get version from changelog
+        id: get_version
+        run: |
+          # Načte první slovo a pomocí sed odstraní úplně první znak (v1.2.3 -> 1.2.3)
+          RAW_VERSION=$(head -n 1 changelog.txt | awk '{print $1}')
+          CLEAN_VERSION=$(echo $RAW_VERSION | sed 's/^.//')
+          
+          if [ -z "$CLEAN_VERSION" ]; then
+            echo "Error: No version found in changelog.txt"
+            exit 1
+          fi
+          
+          echo "version=$CLEAN_VERSION" >> "$GITHUB_OUTPUT"
+          echo "Final version to be used: $CLEAN_VERSION"
+
+      # 2. Vytvoření Git tagu (již bez počátečního znaku)
+      - name: Create Git Tag
+        env:
+          TAG: ${{ steps.get_version.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
+          
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "Tag $TAG už existuje, pokračuji k buildu."
+          else
+            git tag "$TAG"
+            git push origin "$TAG"
+            echo "Tag $TAG vytvořen a pushnut."
+          fi
+
+      # 3. Příprava Docker prostředí
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
 
@@ -36,14 +71,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Extract metadata (tags, labels)
+      # 4. Extrakce metadat pro Docker
+      - name: Extract metadata
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ format('{0}/{1}', env.REGISTRY, github.repository) }}
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
           tags: |
             type=raw,value=latest
+            type=raw,value=${{ steps.get_version.outputs.version }}
 
+      # 5. Samotný Build a Push
       - name: Build and push Docker image
         uses: docker/build-push-action@v6
         with:
@@ -54,4 +92,5 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           provenance: false
           build-args: |
-            VERSION=${{ github.sha }}
+            VERSION=${{ steps.get_version.outputs.version }}
+
