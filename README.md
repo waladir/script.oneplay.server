@@ -38,7 +38,7 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 v1.5.1 (18.4.2026)
-- zpětné přehrávání v build-in přehrávači (od sedin2)
+- zpětné přehrávání v built-in přehrávači (od sedin2)
 - basic autentizace (od sedin2)
 - oprava spouštění streamu některých kanálů
 - přetáčení u live streamů
