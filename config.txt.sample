@@ -14,5 +14,7 @@
 	"pin":"4321",
 	"profile_pin":"4321",
 	"debug":0,
-	"cesta_ffmpeg":"/usr/bin/ffmpeg"
+	"cesta_ffmpeg":"/usr/bin/ffmpeg",
+	"auth_user":"",
+	"auth_pass":""
 }

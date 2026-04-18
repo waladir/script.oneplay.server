@@ -93,6 +93,34 @@ def get_day_epg(from_ts, to_ts):
                         epg.update({channel['channelId'] + str(startts) : epg_item})
     return epg
 
+def get_live_epg():
+    channels = load_channels()
+    current_ts = int(time.time())
+    epg = get_day_epg(current_ts-2*60*60, current_ts + 60*60)
+    channel_epg = {}
+    for channel_id in channels.keys():
+        channel_epg.update({channel_id : {'now' : None, 'next' : None}})
+    for epg_item in sorted(epg.values(), key = lambda item: item['startts']):
+        channel_id = epg_item['channel_id']
+        if channel_id not in channel_epg:
+            continue
+        if epg_item['startts'] <= current_ts and epg_item['endts'] > current_ts:
+            if channel_epg[channel_id]['now'] is None:
+                channel_epg[channel_id]['now'] = {
+                    'title' : epg_item['title'],
+                    'time' : datetime.fromtimestamp(epg_item['startts']).strftime('%H:%M') + ' - ' + datetime.fromtimestamp(epg_item['endts']).strftime('%H:%M'),
+                    'startts' : epg_item['startts'],
+                    'endts' : epg_item['endts'],
+                    'description' : epg_item.get('description', ''),
+                    'cover' : epg_item.get('cover', '')
+                }
+        elif epg_item['startts'] > current_ts and channel_epg[channel_id]['next'] is None:
+            channel_epg[channel_id]['next'] = {
+                'title' : epg_item['title'],
+                'time' : datetime.fromtimestamp(epg_item['startts']).strftime('%H:%M') + ' - ' + datetime.fromtimestamp(epg_item['endts']).strftime('%H:%M')
+            }
+    return channel_epg
+
 def get_epg():
     tz_offset = int(datetime.now(timezone.utc).astimezone().utcoffset().total_seconds() / 3600)
     channels = load_channels()

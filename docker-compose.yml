@@ -19,4 +19,7 @@ services:
       PROFILE_PIN: 4321
       DEBUG: 0
       CESTA_FFMPEG: /usr/bin/ffmpeg
+      AUTH_USER:
+      AUTH_PASS:
+
 

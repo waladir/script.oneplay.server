@@ -37,6 +37,12 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.5.1 (18.4.2026)
+- zpětné přehrávání v build-in přehrávači (od sedin2)
+- basic autentizace (od sedin2)
+- oprava spouštění streamu některých kanálů
+- přetáčení u live streamů
+
 v1.5.0 (11.4.2026)
 - nová webová stránka (od sedlin2)
 
@@ -48,6 +54,3 @@ v1.4.4 (7.4.2026)
 
 v1.4.3 (1.4.2026)
 - oprava generování EPG
-
-v1.4.2 (1.4.2026)
-- změna verze API

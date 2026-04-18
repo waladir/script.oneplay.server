@@ -1,3 +1,9 @@
+v1.5.1 (18.4.2026)
+- zpětné přehrávání v build-in přehrávači (od sedin2)
+- basic autentizace (od sedin2)
+- oprava spouštění streamu některých kanálů
+- přetáčení u live streamů
+
 v1.5.0 (11.4.2026)
 - nová webová stránka (od sedin2)
 
@@ -9,7 +15,3 @@ v1.4.4 (7.4.2026)
 
 v1.4.3 (1.4.2026)
 - oprava generování EPG
-
-v1.4.2 (1.4.2026)
-- změna verze API
-
