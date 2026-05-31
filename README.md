@@ -38,7 +38,7 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 v1.5.2 (31.5.2026)
-- vypnutí zobrazení warování při přístupu s neroutovatelných/privátních rozsahů
+- vypnutí zobrazení varování při přístupu s neroutovatelných/privátních rozsahů
 - přidání možnosti nastavit whitelist klientských adres, pro který nebude vyžadována autentizace
 - úprava poměru stran u ikon
 
