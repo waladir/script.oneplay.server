@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.1">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.2">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,11 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.5.2 (31.5.2026)
+- vypnutí zobrazení warování při přístupu s neroutovatelných/privátních rozsahů
+- přidání možnosti nastavit whitelist klientských adres, pro který nebude vyžadována autentizace
+- úprava poměru stran u ikon
+
 v1.5.1 (18.4.2026)
 - zpětné přehrávání v built-in přehrávači (od sedin2)
 - basic autentizace (od sedin2)
@@ -29,9 +34,6 @@ v1.4.5 (7.4.2026)
 
 v1.4.4 (7.4.2026)
 - změny API Oneplay
-
-v1.4.3 (1.4.2026)
-- oprava generování EPG
     </news>
     <assets>
         <icon>icon.png</icon>

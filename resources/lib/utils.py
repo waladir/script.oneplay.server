@@ -5,6 +5,7 @@ import socket
 import codecs
 import json
 from xml.dom import minidom
+import ipaddress
 
 appVersion = 'R9.18'
 api_version = 'v1.9'
@@ -129,6 +130,28 @@ def check_client_network(ip):
         client_ip = ip
         server_parts = server_ip.split('.')
         client_parts = client_ip.split('.')
-        return server_parts[:2] == client_parts[:2] or client_ip == '127.0.0.1'
+        return server_parts[:2] == client_parts[:2] or client_ip == '127.0.0.1' or ipaddress.ip_address(client_ip).is_private
     except Exception:
         return False
+
+def check_ip_whitelist(ip):
+    if ip == '127.0.0.1':
+        return True
+    ip_whitelist = get_config_value('ip_whitelist')
+    if ip_whitelist is None or len(ip_whitelist.strip()) == 0:
+        return False
+    try:
+        ip = ipaddress.ip_address(ip.strip())
+    except ValueError:
+        return False
+    whitelist_items = ip_whitelist.strip().replace(' ', '').split(',')
+    if not whitelist_items:
+        return False
+    for item in whitelist_items:
+        try:
+            network = ipaddress.ip_network(item, strict=True)
+            if ip in network:
+                return True
+        except ValueError:
+            continue
+    return False

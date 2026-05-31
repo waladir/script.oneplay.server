@@ -21,5 +21,6 @@ services:
       CESTA_FFMPEG: /usr/bin/ffmpeg
       AUTH_USER:
       AUTH_PASS:
+      IP_WHITELIST:
 
 

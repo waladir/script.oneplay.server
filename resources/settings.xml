@@ -5,7 +5,8 @@
                 <setting label="Heslo" type="text" id="password" option="hidden" enable="!eq(-1,false)" default=""/>
                 <setting label="Profil" type="text" id="profile" default=""/>
                 <setting label="Uživatel Onepaly serveru (prázdné = bez zabezpečení)" type="text" id="auth_user" default=""/>
-                <setting label="Heslo pro přihlíšení do Oneplay Serveru" type="text" id="auth_pass" option="hidden" default=""/>                
+                <setting label="Heslo pro přihlášení do Oneplay Serveru" type="text" id="auth_pass" option="hidden" default=""/>
+                <setting label="IP whitelist (bez přihlášení)" type="text" id="ip_whitelist" default=""/>
                 <setting label="Device Id" type="text" id="deviceid" default=""/>
                 <setting label="PIN" type="text" id="pin" option="hidden" default="4321"/>
         </category>

@@ -12,7 +12,7 @@ from resources.lib.session import load_session
 from resources.lib.channels import load_channels
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
 from resources.lib.stream import get_live, get_archive
-from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network
+from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist
 
 def get_base_url(include_auth = False):
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
@@ -31,6 +31,8 @@ def check_basic_auth():
     auth_user = get_config_value('auth_user')
     auth_pass = get_config_value('auth_pass')
     if not auth_user or not auth_pass:
+        return
+    if check_ip_whitelist(request.environ.get('REMOTE_ADDR', '')):
         return
     auth = request.headers.get('Authorization')
     if auth and auth.startswith('Basic '):
@@ -214,7 +216,8 @@ def config():
 @post('/')
 def page():
     message = ''
-    warning = not check_client_network(request.environ.get('REMOTE_ADDR', ''))
+    ip = request.environ.get('REMOTE_ADDR', '')
+    warning = not check_client_network(ip) and not check_ip_whitelist(ip)
     if request.params.get('action') is not None:
         action = request.params.get('action')
         if action == 'reset_channels':

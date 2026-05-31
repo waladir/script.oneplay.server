@@ -36,7 +36,7 @@ def get_channels():
             imagesq = None
             if len(channel['logo']) > 1:
                 if image is None:  
-                    image = channel['logo'].replace('{WIDTH}', '480').replace('{HEIGHT}', '320')
+                    image = channel['logo'].replace('{WIDTH}', '390').replace('{HEIGHT}', '228')
                 if imagesq is None:  
                     imagesq = channel['logo'].replace('{WIDTH}', '256').replace('{HEIGHT}', '256')
             else:
