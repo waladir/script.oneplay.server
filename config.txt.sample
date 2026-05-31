@@ -17,5 +17,5 @@
 	"cesta_ffmpeg":"/usr/bin/ffmpeg",
 	"auth_user":"",
 	"auth_pass":"",
-	"ip_whitelist":"",
+	"ip_whitelist":""
 }
