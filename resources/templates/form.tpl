@@ -372,7 +372,77 @@
         .actions { flex-direction: column; }
         .btn { width: 100%; justify-content: center; }
       }
-    </style>
+
+      /* Seskupení loga a slideru pod sebou */
+      .ch-left-side {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 4px; /* Mezera mezi logem a sliderem */
+        min-width: 60px; /* Přizpůsobte podle běžné šířky vašich log */
+      }
+
+      /* Kontejner pro miniaturní přepínač */
+      .ch-status-mini {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 100%;
+        padding-top: 2px;
+      }
+
+      /* Ultra malý switch */
+      .switch-mini {
+        position: relative;
+        display: inline-block;
+        width: 26px;
+        height: 14px;
+      }
+
+      .switch-mini input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+
+      .slider-mini {
+        position: absolute;
+        cursor: pointer;
+        top: 0; left: 0; right: 0; bottom: 0;
+        background-color: #555;
+        transition: .2s;
+      }
+
+      .slider-mini:before {
+        position: absolute;
+        content: "";
+        height: 10px;
+        width: 10px;
+        left: 2px;
+        bottom: 2px;
+        background-color: white;
+        transition: .2s;
+      }
+
+      /* Aktivní zelený stav */
+      input:checked + .slider-mini {
+        background-color: #4CAF50;
+      }
+
+      /* Posun kolečka v mini verzi */
+      input:checked + .slider-mini:before {
+        transform: translateX(12px);
+      }
+
+      .slider-mini.round {
+        border-radius: 14px;
+      }
+
+      .slider-mini.round:before {
+        border-radius: 50%;
+      }
+      </style>
   </head>
   <body>
     <div class="container">
@@ -442,7 +512,19 @@
       <div class="channel-grid">
         % for item in playlist:
         <div class="channel-card" data-channel-id="{{ item['channel_id'] }}" onclick="playChannel('{{ item['slug'] }}', '{{ item['name'] }}', this)">
-          <img src="{{ item['logo'] }}" alt="{{ item['name'] }}" loading="lazy">
+          <div class="ch-left-side">
+            <img src="{{ item['logo'] }}" alt="{{ item['name'] }}" loading="lazy">
+            
+            <div class="ch-status-mini" onclick="event.stopPropagation();" title="Zobrazit v playlistu">
+              <label class="switch-mini">
+                <input type="checkbox" 
+                      class="channel-toggle" 
+                      data-channel-id="{{ item['channel_id'] }}" 
+                      {{ 'checked' if item.get('visible', True) else '' }}>
+                <span class="slider-mini round"></span>
+              </label>
+            </div>
+          </div>
           <div class="ch-meta">
             <span class="ch-name">{{ item['name'] }}</span>
             <div class="ch-epg" style="display:none"></div>
@@ -968,6 +1050,28 @@
           card.style.display = name.includes(query) ? '' : 'none';
         });
       }
+      
+      document.addEventListener('DOMContentLoaded', function() {
+          const toggles = document.querySelectorAll('.channel-toggle');
+          
+          toggles.forEach(toggle => {
+              toggle.addEventListener('change', function() {
+                  const channelId = this.getAttribute('data-channel-id');
+                  const status = this.checked ? 'enable' : 'disable';
+                  
+                  fetch(`/channel/${channelId}/${status}`, {
+                      method: 'GET'
+                  })
+                  .catch(error => {
+                      console.error('Chyba:', error);
+                      this.checked = !this.checked;
+                      alert('Nepodařilo se změnit stav kanálu.');
+                  });
+              });
+          });
+      });
+
     </script>
+
   </body>
 </html>

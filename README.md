@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.5.3 (1.6.2026)
+- přidaná možnost vyřazení kanálů z playlistu
+
 v1.5.2 (31.5.2026)
 - vypnutí zobrazení varování při přístupu s neroutovatelných/privátních rozsahů
 - přidání možnosti nastavit whitelist klientských adres, pro který nebude vyžadována autentizace
@@ -53,6 +56,3 @@ v1.5.0 (11.4.2026)
 
 v1.4.5 (7.4.2026)
 - oprava catchupu
-
-v1.4.4 (7.4.2026)
-- změny API Oneplay
