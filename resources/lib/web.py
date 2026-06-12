@@ -2,7 +2,8 @@
 import os
 
 from urllib.parse import quote, unquote
-from bottle import run, route, post, response, request, redirect, template, static_file, hook, HTTPResponse, TEMPLATE_PATH
+from bottle import run, route, post, response, request, redirect, template, static_file, hook, HTTPResponse, HTTPError, TEMPLATE_PATH, install
+import traceback
 import json
 import base64
 import hmac
@@ -12,7 +13,34 @@ from resources.lib.session import load_session
 from resources.lib.channels import load_channels, load_diasbled_channels, save_disabled_channels
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
 from resources.lib.stream import get_live, get_archive
-from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist
+from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist, OneplayError, log_error, is_debug
+
+
+class OneplayErrorPlugin:
+    name = 'oneplay_errors'
+    api = 2
+
+    def apply(self, callback, route):
+        def wrapper(*args, **kwargs):
+            try:
+                return callback(*args, **kwargs)
+            except HTTPResponse:
+                raise
+            except HTTPError:
+                raise
+            except OneplayError as e:
+                response.status = 500
+                response.content_type = 'text/plain; charset=UTF-8'
+                return e.message
+            except Exception as e:
+                log_error('Neočekávaná chyba', str(e))
+                if is_debug():
+                    log_error('Traceback', traceback.format_exc())
+                response.status = 500
+                response.content_type = 'text/plain; charset=UTF-8'
+                return 'Interní chyba serveru'
+        return wrapper
+
 
 def get_base_url(include_auth = False):
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
@@ -266,6 +294,7 @@ def page():
     return template('form.tpl', version = get_version(), message = message, warning = warning, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist, auth_enabled = auth_enabled, player_enabled = player_enabled)
 
 def start_server():
+    install(OneplayErrorPlugin())
     port = int(get_config_value('webserver_port'))
-    run(host = '0.0.0.0', port = port)
+    run(host = '0.0.0.0', port = port, debug = False)
 

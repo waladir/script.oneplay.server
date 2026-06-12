@@ -1,0 +1,14 @@
+# lokální konfigurace (vzor config.txt.sample zůstává v repu)
+config.txt
+config.txt.*
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# runtime data
+data/session.txt
+data/channels.txt
+data/epg.txt
+data/disabled_channels.txt

@@ -6,7 +6,7 @@ from resources.lib.channels import load_channels
 from resources.lib.session import load_session
 from resources.lib.epg import get_channel_epg
 from resources.lib.api import call_api
-from resources.lib.utils import get_config_value, api_version
+from resources.lib.utils import get_config_value, api_version, log_error, is_debug
 
 def get_channel_id(channel_name):
     channels = load_channels()
@@ -71,6 +71,10 @@ def get_live(id):
         if 'timeShift' in data['playerControl']['liveControl']['timeline'] and data['playerControl']['liveControl']['timeline']['timeShift']['available'] == False:
             post.update({'payload' : {'criteria' : post['payload']['criteria'], 'startMode' : 'live'}})
             data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/content.play', data = post, token = token)
+    if 'media' not in data or 'stream' not in data.get('media', {}) or 'assets' not in data.get('media', {}).get('stream', {}):
+        detail = str(data) if is_debug() else None
+        log_error('Nepodařilo se získat stream pro kanál ' + str(id), detail)
+        return url
     for asset in data['media']['stream']['assets']:
         if asset['protocol'] == 'hls':
             if 'drm' not in asset:

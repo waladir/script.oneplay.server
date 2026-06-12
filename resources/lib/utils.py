@@ -6,6 +6,13 @@ import codecs
 import json
 from xml.dom import minidom
 import ipaddress
+import sys
+
+class OneplayError(Exception):
+    def __init__(self, message, detail=None):
+        super().__init__(message)
+        self.message = message
+        self.detail = detail
 
 appVersion = 'R11.33'
 api_version = 'v1.11'
@@ -56,19 +63,36 @@ def get_config_value(setting):
         if setting in config:
             return config[setting]
 
-def log_message(message):
+def is_debug():
+    debug = get_config_value('debug')
+    return debug == 1 or debug == '1' or debug == -1 or debug == '-1' or debug == 'true'
+
+def _write_log(prefix, message):
     if is_kodi() == True:
         import xbmc
-        xbmc.log('Oneplay Server > ' + message) 
+        xbmc.log('Oneplay Server > ' + prefix + message)
     else:
-        print(message)
+        print('Oneplay Server > ' + prefix + message, flush=True)
+
+def log_message(message):
+    _write_log('', message)
+
+def log_error(message, detail=None):
+    line = message
+    if detail:
+        line += ' | ' + str(detail)
+    _write_log('CHYBA: ', line)
+
+def raise_error(message, detail=None):
+    log_error(message, detail)
+    raise OneplayError(message, detail)
 
 def display_message(message):
     if is_kodi() == True:
         import xbmcgui
         xbmcgui.Dialog().notification('Oneplay Server', message, xbmcgui.NOTIFICATION_ERROR, 4000)
     else:
-        print(message)
+        print('Oneplay Server > ' + message, flush=True)
 
 def save_json_data(file, data):
     if is_kodi() == True:

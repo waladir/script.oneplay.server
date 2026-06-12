@@ -37,6 +37,11 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.5.5 (12.6.2026)
+- oprava loginu pro nové OnePlay API (step.groups[].accounts)
+- srozumitelnější logování chyb místo Python tracebacku
+- ochrana proti opakovaným login pokusům (rate limit API)
+
 v1.5.4 (11.6.2026)
 - úprava verze API a aplikace
 

@@ -6,7 +6,7 @@ from websocket import create_connection
 from urllib.request import urlopen, Request
 from urllib.error import HTTPError
 
-from resources.lib.utils import appVersion,get_config_value, log_message
+from resources.lib.utils import appVersion, get_config_value, log_message, log_error
 
 def call_api(url, data, token = None):
     headers = {'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0', 'Accept-Encoding' : 'gzip', 'Accept' : '*/*', 'Content-type' : 'application/json;charset=UTF-8'} 
@@ -34,9 +34,10 @@ def call_api(url, data, token = None):
         if len(data) > 0:
             data = json.loads(data)
         if 'result' not in data or 'status' not in data['result'] or data['result']['status'] not in ['OkAsync', 'Ok']:
-            log_message('Chyba při volání '+ str(url))
+            api_msg = data.get('result', {}).get('message', 'Chyba při volání API')
+            log_error('Chyba API ' + str(url), api_msg)
             ws.close()
-            return {'result': {'status': 'Error', 'message': data.get('result', {}).get('message', 'Chyba při volání API')}}  
+            return {'result': {'status': 'Error', 'message': api_msg}}  
         if data['result']['status'] == 'OkAsync':
             response = ws.recv()
             if (type(get_config_value('debug')) == int and get_config_value('debug') > 0) or get_config_value('debug') == '1' or get_config_value('debug') == 'true':
@@ -47,7 +48,7 @@ def call_api(url, data, token = None):
             if response and len(response) > 0:
                 data = json.loads(response)
                 if 'response' not in data or 'result' not in data['response'] or 'status' not in data['response']['result'] or data['response']['result']['status'] != 'Ok' or data['response']['context']['requestId'] != requestId:
-                    log_message('Chyba při volání '+ str(url))
+                    log_error('Chyba API ' + str(url), 'Neplatná asynchronní odpověď')
                     ws.close()
                     return { 'err' : 'Chyba při volání API' }  
                 ws.close()
@@ -65,13 +66,16 @@ def call_api(url, data, token = None):
                 else:
                     log_message(str(data))        
             if 'result' not in data or 'status' not in data['result'] or data['result']['status'] != 'Ok' or data['context']['requestId'] != requestId:
-                log_message('Chyba při volání '+ str(url))
+                log_error('Chyba API ' + str(url), 'Neplatná synchronní odpověď')
                 return { 'err' : 'Chyba při volání API' }
             else:
                 if 'data' in data:
                     return data['data']
             return []
     except HTTPError as e:
-        log_message('Chyba při volání '+ str(url) + ': ' + e.reason)
-        ws.close()
+        log_error('Chyba API ' + str(url), e.reason)
+        try:
+            ws.close()
+        except Exception:
+            pass
         return { 'err' : e.reason }  
