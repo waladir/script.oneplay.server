@@ -12,3 +12,7 @@ data/session.txt
 data/channels.txt
 data/epg.txt
 data/disabled_channels.txt
+
+# lokální poznámky k PR / fóru
+PR_BODY.md
+FORUM_POST.txt
