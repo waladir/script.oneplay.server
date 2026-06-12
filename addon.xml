@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.4">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.5">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.5.5 (12.6.2026)
+- úprava načítání účtů
+	    
 v1.5.4 (11.6.2026)
 - úprava verze API a aplikace
 	    
@@ -31,9 +34,6 @@ v1.5.1 (18.4.2026)
 - basic autentizace (od sedin2)
 - oprava spouštění streamu některých kanálů
 - přetáčení u live streamů
-
-v1.5.0 (11.4.2026)
-- nová webová stránka (od sedin2)
     </news>
     <assets>
         <icon>icon.png</icon>

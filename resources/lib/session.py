@@ -16,8 +16,9 @@ def get_token():
     if data['step']['schema'] == 'ShowAccountChooserStep':
         accounts = []
         authToken = data['step']['authToken']
-        for account in data['step']['accounts']:
-            accounts.append(account['accountId'])
+        for group in data['step']['groups']:
+            for account in group['accounts']:
+                accounts.append(account['accountId'])
 
         if get_config_value('poradi_sluzby') is None:
             account_index = -1
