@@ -1,0 +1,13 @@
+Ahoj,
+
+po přechodu OnePlay na nové API (v1.11+) přestal u některých účtů fungovat Oneplay Server v TVHeadendu. V logu padal KeyError: 'accounts' při loginu.
+
+Příčina: API u ShowAccountChooserStep vrací účty v step.groups[].accounts, ne v step.accounts (typicky u více služeb pod jedním loginem).
+
+Pull request do upstreamu: [doplnit odkaz po vytvoření PR]
+Dočasně patch ve forku: https://github.com/rhemzal/script.oneplay.server/tree/fix/api-login-groups
+
+Testováno: TVHeadend + systemd, playlist/EPG/stream OK.
+U více služeb pomůže poradi_sluzby v config.txt (1 = první služba).
+
+Díky waladirovi za Oneplay Server!
