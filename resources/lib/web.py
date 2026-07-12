@@ -91,12 +91,14 @@ def epg_channel(channel_id, day_offset):
     return json.dumps(result)
 
 @route('/playlist')
-def playlist():
+@route('/playlist/group/<group_name>')
+def playlist(group_name = None):
     from urllib.parse import urlencode
     headers = {'User-Agent' : 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:142.0) Gecko/20100101 Firefox/142.0', 'Accept-Encoding' : 'gzip, deflate, br, zstd', 'Accept' : '*/*'}
     channels = load_channels()
     base_url = get_base_url()
     output = '#EXTM3U x-tvg-url="' + base_url + '/epg"\n'
+    group_string = f' group-title="{group_name}"' if group_name else ''
     for channel in channels:
         if channels[channel]['visible'] == True:
             if channels[channel]['logo'] == None:
@@ -107,7 +109,7 @@ def playlist():
                 channel_name = channels[channel]['name'].replace(' HD', '')
             else:
                 channel_name = channels[channel]['name']
-            output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '" catchup-days="7" catchup="shift", ' + channel_name + '\n'
+            output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '"' + group_string + ' catchup-days="7" catchup="shift", ' + channel_name + '\n'
             output += '#KODIPROP:inputstream.adaptive.stream_headers=' + urlencode(headers) + '\n'
             output += '#KODIPROP:inputstream.adaptive.manifest_headers=' + urlencode(headers) + '\n'
             if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == '0' or get_config_value('pouzivat_cisla_kanalu') == 'false':
@@ -219,10 +221,9 @@ def channel(channel, status):
     disabled_channels = load_diasbled_channels()
     if status == 'disable' and channel not in disabled_channels:
         disabled_channels.append(channel)
-        save_disabled_channels(disabled_channels)
     elif status == 'enable' and channel in disabled_channels:
         disabled_channels.remove(channel)
-        save_disabled_channels(disabled_channels)
+    save_disabled_channels(disabled_channels)
 
 @route('/')
 @post('/')
@@ -260,7 +261,6 @@ def page():
             else:
                 channel_name = channels[channel]['name']
             playlist.append({'name' : channel_name, 'url' : base_url_with_auth + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8', 'slug' : quote(channel_name.replace('/', 'sleš')) + '.m3u8', 'logo' : channels[channel]['logo'], 'channel_id' : channel, 'liveOnly' : channels[channel].get('liveOnly', False), 'visible' : channels[channel]['visible']})
-            print(channels[channel]['visible'])
     TEMPLATE_PATH.append(os.path.join(get_script_path(), 'resources', 'templates'))
     auth_enabled = bool(get_config_value('auth_user') and get_config_value('auth_pass'))
     return template('form.tpl', version = get_version(), message = message, warning = warning, playlist_url = playlist_url, playlist_tvheadend_url = playlist_tvheadend_url, epg_url = epg_url, playlist = playlist, auth_enabled = auth_enabled, player_enabled = player_enabled)
