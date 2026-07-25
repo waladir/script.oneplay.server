@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.6">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="1.5.7">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v1.5.7 (25.7.2026)
+- update verze API
+
 v1.5.6 (12.7.2026)
 - přidání možnosti playlistu se skupinou kanálů
 - oprava chování při disablování chování např. po resetu kanálů
@@ -27,11 +30,6 @@ v1.5.4 (11.6.2026)
 	    
 v1.5.3 (1.6.2026)
 - přidaná možnost vyřazení kanálů z playlistu
-
-v1.5.2 (31.5.2026)
-- vypnutí zobrazení varování při přístupu s neroutovatelných/privátních rozsahů
-- přidání možnosti nastavit whitelist klientských adres, pro který nebude vyžadována autentizace
-- úprava poměru stran u ikon
     </news>
     <assets>
         <icon>icon.png</icon>
