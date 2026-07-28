@@ -8,7 +8,6 @@ from xml.dom import minidom
 import ipaddress
 
 appVersion = 'R11.33'
-api_version = 'v1.12'
 
 def is_docker():
     # Check for Docker-specific environment variables

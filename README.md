@@ -37,6 +37,10 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v1.6.0 (28.7.2026)
+- automatické oštření změny verze API
+- přidání logování odpovědi pokud dojde k chybě při volání API
+
 v1.5.7 (25.7.2026)
 - update verze API
 
@@ -49,6 +53,3 @@ v1.5.5 (12.6.2026)
 
 v1.5.4 (11.6.2026)
 - úprava verze API a aplikace
-
-v1.5.3 (1.6.2026)
-- přidaná možnost vyřazení kanálů z playlistu

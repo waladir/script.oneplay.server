@@ -6,7 +6,7 @@ from datetime import datetime, timezone
 from resources.lib.api import call_api
 from resources.lib.session import load_session
 from resources.lib.channels import load_channels
-from resources.lib.utils import replace_by_html_entity, get_config_value, save_json_data, load_json_data, display_message, api_version
+from resources.lib.utils import replace_by_html_entity, get_config_value, save_json_data, load_json_data, display_message
 
 def get_channel_epg(channel_id, from_ts, to_ts):
     token = load_session()
@@ -17,7 +17,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
         channel_id = channel[0]
         md_stream = int(channel[1])
     post = {"payload":{"criteria":{"channelSetId":"channel_list.1","viewport":{"channelRange":{"from":0,"to":200},"timeRange":{"from":datetime.fromtimestamp(from_ts-7200).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z',"to":datetime.fromtimestamp(to_ts-3600).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z'},"schema":"EpgViewportAbsolute"}},"requestedOutput":{"channelList":"none","datePicker":False,"channelSets":False}}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/epg.display', data = post, token = token)
+    data = call_api(api = 'epg.display', data = post, token = token)
     if 'err' not in data:
         for channel in data['schedule']:
             if channel['channelId'] == channel_id:
@@ -32,7 +32,7 @@ def get_channel_epg(channel_id, from_ts, to_ts):
                     if md_stream > 0 and len(item['labels']) > 0 and 'name' in item['labels'][0] and item['labels'][0]['name'] == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension':
                         stream_number = 1
                         post = {"payload":{"contentId":id}}
-                        md_data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/page.content.display', data = post, token = token)
+                        md_data = call_api(api = 'page.content.display', data = post, token = token)
                         if 'err' not in md_data:                        
                             for block in md_data['layout']['blocks']:
                                 if block['schema'] == 'TabBlock':
@@ -57,9 +57,9 @@ def get_day_epg(from_ts, to_ts):
     token = load_session()
     epg = {}
     post = {"payload":{"criteria":{"channelSetId":"channel_list.1","viewport":{"channelRange":{"from":0,"to":200},"timeRange":{"from":datetime.fromtimestamp(from_ts).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z',"to":datetime.fromtimestamp(to_ts).strftime('%Y-%m-%dT%H:%M:%S') + '.000Z'},"schema":"EpgViewportAbsolute"}},"requestedOutput":{"channelList":"none","datePicker":False,"channelSets":False}}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/epg.display', data = post, token = token)
+    data = call_api(api = 'epg.display', data = post, token = token)
     if 'err' in data:
-        data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/epg.display', data = post, token = token)
+        data = call_api(api = 'epg.display', data = post, token = token)
     if 'err' not in data:
         for channel in data['schedule']:
             if channel['channelId'] in channels:
@@ -75,7 +75,7 @@ def get_day_epg(from_ts, to_ts):
                             if 'Oneplay Sport ' in channels[channel['channelId']]['name']:
                                 stream_number = 1
                                 post = {"payload":{"contentId":id}}
-                                md_data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/page.content.display', data = post, token = token)
+                                md_data = call_api(api = 'page.content.display', data = post, token = token)
                                 if 'err' not in md_data:
                                     for block in md_data['layout']['blocks']:
                                         if block['schema'] == 'TabBlock':

@@ -5,14 +5,16 @@ import json
 import time
 
 from resources.lib.api import call_api
-from resources.lib.utils import get_config_value, display_message, load_json_data, save_json_data, api_version
+from resources.lib.utils import get_config_value, display_message, load_json_data, save_json_data
 
 def get_token():
     post = {"payload":{"command":{"schema":"LoginWithCredentialsCommand","email":get_config_value('username'),"password":get_config_value('password')}}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.login.step', data = post)
-    if 'err' in data or 'step' not in data or ('bearerToken' not in data['step'] and data['step']['schema'] != 'ShowAccountChooserStep'):        
-        display_message('Problém při přihlášení')
-        sys.exit()
+    data = call_api(api = '/user.login.step', data = post)
+    if 'err' in data or 'step' not in data or ('bearerToken' not in data['step'] and data['step']['schema'] != 'ShowAccountChooserStep'):
+        data = call_api(api = '/user.login.step', data = post)
+        if 'err' in data or 'step' not in data or ('bearerToken' not in data['step'] and data['step']['schema'] != 'ShowAccountChooserStep'): 
+            display_message('Problém při přihlášení')
+            sys.exit()
     if data['step']['schema'] == 'ShowAccountChooserStep':
         accounts = []
         authToken = data['step']['authToken']
@@ -35,7 +37,7 @@ def get_token():
                 accountId = account
             idx = idx + 1
         post = {"payload":{"command":{"schema":"LoginWithAccountCommand","accountId":accountId,"authCode":authToken}}}
-        data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.login.step', data = post)   
+        data = call_api(api = 'user.login.step', data = post)   
         if 'err' in data or 'step' not in data or 'bearerToken' not in data['step']:
             display_message('Problém při přihlášení')
             sys.exit()            
@@ -43,9 +45,9 @@ def get_token():
     token = data['step']['bearerToken']
     deviceId = data['step']['currentUser']['currentDevice']['id']
     post = {"payload":{"id":deviceId,"name": get_config_value('deviceid')}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.device.change', data = post, token = token)
+    data = call_api(api = 'user.device.change', data = post, token = token)
     post = {"payload":{"screen":"devices"}}
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/setting.display', data = post, token = token)
+    data = call_api(api = 'setting.display', data = post, token = token)
     devices = {}
     for block in data.get('screen', {}).get('blocks', []):
         if block['schema'] == 'SettingUserDevicesBlock':
@@ -56,9 +58,9 @@ def get_token():
     for device in devices:
         if device['id'] != deviceId and device['name'] ==  get_config_value('deviceid'):
             post = {"payload":{"criteria":{"schema":"UserDeviceIdCriteria","id":device['id']}}}
-            data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.device.remove', data = post, token = token)
+            data = call_api(api = 'user.device.remove', data = post, token = token)
 
-    data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.profiles.display', data = {"payload": {"mode": "change"}}, token = token)
+    data = call_api(api = 'user.profiles.display', data = {"payload": {"mode": "change"}}, token = token)
     if 'err' in data or 'availableProfiles' not in data or 'profiles' not in data['availableProfiles']:
         display_message('Problém při přihlášení')
         sys.exit()
@@ -68,7 +70,7 @@ def get_token():
                 post = {"payload":{"profileId":profile['profile']['id']},"authorization":[{"schema":"PinRequestAuthorization","pin":get_config_value('profile_pin'),"type":"profile"}]}
             else:
                 post = {"payload":{"profileId":profile['profile']['id']}}
-            data = call_api(url = 'https://http.cms.jyxo.cz/api/' + api_version + '/user.profile.select', data = post, token = token)
+            data = call_api(api = 'user.profile.select', data = post, token = token)
             if 'err' in data or 'bearerToken' not in data:
                 display_message('Problém při přihlášení')
                 sys.exit()
