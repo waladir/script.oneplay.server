@@ -1,5 +1,5 @@
 v1.6.0 (28.7.2026)
-- automatické oštření změny verze API
+- automatické ošetření změny verze API
 - přidání logování odpovědi pokud dojde k chybě při volání API
 
 v1.5.7 (25.7.2026)
