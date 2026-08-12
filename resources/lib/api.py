@@ -10,10 +10,10 @@ from resources.lib.utils import appVersion,get_config_value, log_message, load_j
 
 BASE_API_VERSION='v1.11'
 APIURL = 'https://http.cms.jyxo.cz/api/'
-
+UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:153.0) Gecko/20100101 Firefox/153.0'
 
 def call_api(api, data, token = None):
-    headers = {'User-Agent' : 'Mozilla/5.0 (X11; Linux x86_64; rv:128.0) Gecko/20100101 Firefox/128.0', 'Accept-Encoding' : 'gzip', 'Accept' : '*/*', 'Content-type' : 'application/json;charset=UTF-8'}
+    headers = {'User-Agent' : UA, 'Accept-Encoding' : 'gzip', 'Accept' : '*/*', 'Content-type' : 'application/json;charset=UTF-8'}
     api_version = load_api_version()
     url = f"{APIURL}{api_version}/{api}"
     if token is not None:

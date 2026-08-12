@@ -37,6 +37,11 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+
+v1.6.2 (12.8.2026)
+- update UA
+- doplnění UA do playlistu pro TVheadend
+
 v1.6.1 (8.8.2026)
 - oprava spouštění streamu
 
@@ -50,6 +55,3 @@ v1.5.7 (25.7.2026)
 v1.5.6 (12.7.2026)
 - přidání možnosti playlistu se skupinou kanálů
 - oprava chování při disablování chování např. po resetu kanálů
-
-v1.5.5 (12.6.2026)
-- úprava načítání účtů

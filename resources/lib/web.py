@@ -13,6 +13,7 @@ from resources.lib.channels import load_channels, load_diasbled_channels, save_d
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
 from resources.lib.stream import get_live, get_archive
 from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist
+from resources.lib.api import UA
 
 def get_base_url(include_auth = False):
     base_url = request.urlparts.scheme + '://' + request.urlparts.netloc
@@ -139,9 +140,9 @@ def playlist_tvheadend():
                 channel_name = channels[channel]['name']
             output += '#EXTINF:-1 provider="Oneplay" tvg-chno="' + str(channels[channel]['channel_number']) + '" tvg-name="' + channel_name + '" tvg-logo="' + logo + '", ' + channel_name + '\n'
             if get_config_value('pouzivat_cisla_kanalu') == None or get_config_value('pouzivat_cisla_kanalu') == 0 or get_config_value('pouzivat_cisla_kanalu') == '0' or get_config_value('pouzivat_cisla_kanalu') == 'false':
-                output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -i "' + base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+                output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -user_agent "'+ UA + '" -i "' + base_url + '/play/' + quote(channel_name.replace('/', 'sleš')) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
             else:
-                output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -i "' + base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
+                output += 'pipe://' + ffmpeg + ' -loglevel error -fflags +genpts -user_agent "'+ UA + '" -i "' + base_url + '/play_num/' + str(channels[channel]['channel_number']) + '.m3u8" -f mpegts -c copy -vcodec copy -acodec copy -metadata service_provider=Oneplay -metadata service_name="' + channel_name + '" pipe:1\n'
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
