@@ -540,8 +540,7 @@
 
       <div class="modal-overlay" id="links-modal" onclick="closeAllModals(event)">
         <div class="modal">
-          <div class="modal-header">
-            <h3>&#128279; IPTV odkazy</h3>
+          <div class="modal-header"><h3>&#128279; IPTV odkazy</h3>
             <button class="close-btn" onclick="toggleModal('links-modal', false)">&#10005;</button>
           </div>
           <div class="modal-body">
@@ -639,9 +638,20 @@
       // Funkce pro kopírování s vizuální odezvou
       async function copyText(text, btn) {
         try {
-          await navigator.clipboard.writeText(text);
+          if (navigator.clipboard && window.isSecureContext) {
+            await navigator.clipboard.writeText(text);
+          } else {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            document.execCommand('copy');
+            document.body.removeChild(ta);
+          }
           const originalText = btn.innerHTML;
-          btn.innerHTML = btn.tagName === 'BUTTON' && btn.classList.contains('copy-btn') ? 'Zkopírováno!' : '&#9989;';
+          btn.innerHTML = btn.tagName === 'BUTTON' && btn.classList.contains('copy-btn') ? 'Zkopírováno!' : '✅';
           btn.classList.add('success');
           setTimeout(() => {
             btn.innerHTML = originalText;

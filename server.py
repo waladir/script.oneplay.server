@@ -1,53 +1,60 @@
 # -*- coding: utf-8 -*-
 import sys
-import time
-from datetime import datetime, timezone
 import threading
+import time
 
-from resources.lib.web import start_server
 from resources.lib.epg import load_epg
 from resources.lib.utils import is_kodi, get_config_value, log_message
+from resources.lib.web import start_server
+
 
 class BottleThreadClass(threading.Thread):
     def run(self):
         start_server()
 
-if is_kodi() == True:
-    time.sleep(20)
-    
-bt = BottleThreadClass()
-bt.start()
 
-tz_offset = int(datetime.now(timezone.utc).astimezone().utcoffset().total_seconds() / 3600)
+kodi = is_kodi()
+if kodi:
+    time.sleep(20)
+
+server_thread = BottleThreadClass()
+server_thread.start()
 
 if int(get_config_value('interval_stahovani_epg')) == 0:
     sys.exit()
 
-next = time.time() + 10
-if is_kodi() == True:
+next_download = time.time() + 10
+if kodi:
     import xbmc
+
     while not xbmc.Monitor().abortRequested():
-        if(next < time.time()):
+        if next_download < time.time():
             time.sleep(3)
-            if get_config_value('username') and len(get_config_value('username')) > 0 and get_config_value('password') and len(get_config_value('password')) > 0:
-                if int(get_config_value('interval_stahovani_epg')) > 0:
-                    load_epg(reset = True)
-                    interval = int(get_config_value('interval_stahovani_epg'))*60*60
-                    next = time.time() + float(interval)
+            username = get_config_value('username')
+            password = get_config_value('password')
+            interval = int(get_config_value('interval_stahovani_epg'))
+            if username and password and interval > 0:
+                load_epg(reset=True)
+                next_download = time.time() + interval * 60 * 60
+            else:
+                next_download = time.time() + 60
         time.sleep(1)
 else:
     try:
         log_message('Start plánovače pro stahování EPG\n')
         while True:
-            if(next < time.time()):
+            if next_download < time.time():
                 time.sleep(3)
-                if get_config_value('username') and len(get_config_value('username')) > 0 and get_config_value('password') and len(get_config_value('password')) > 0:
-                    if int(get_config_value('interval_stahovani_epg')) > 0:
-                        log_message('Začátek stahování EPG\n')
-                        load_epg(reset = True)
-                        log_message('Konec stahování EPG\n')
-                        interval = int(get_config_value('interval_stahovani_epg'))*60*60
-                        next = time.time() + float(interval)
+                username = get_config_value('username')
+                password = get_config_value('password')
+                interval = int(get_config_value('interval_stahovani_epg'))
+                if username and password and interval > 0:
+                    log_message('Začátek stahování EPG\n')
+                    load_epg(reset=True)
+                    log_message('Konec stahování EPG\n')
+                    next_download = time.time() + interval * 60 * 60
+                else:
+                    next_download = time.time() + 60
             time.sleep(1)
     except KeyboardInterrupt:
         log_message('Ukončení plánovače pro stahování EPG\n')
