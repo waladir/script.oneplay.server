@@ -38,7 +38,7 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 v2.0.2 (3.9.2026)
-- úprava JS pro kopírování odkázů
+- úprava JS pro kopírování odkazů
 
 v2.0.0 (29.8.2026)
 - refaktoring kódu
