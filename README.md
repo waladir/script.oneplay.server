@@ -37,6 +37,13 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v2.1.1 (7.9.2026)
+- oprava načítání účtů
+- defaultní hodnoty nastavení (i mimo docker a Kodi)
+
+v2.1.0 (3.9.2026)
+- přidaná podpora timeshiftu a přetáčení (od sedlin2)
+
 v2.0.2 (3.9.2026)
 - úprava JS pro kopírování odkazů
 
@@ -46,10 +53,3 @@ v2.0.0 (29.8.2026)
 v1.6.0 (28.7.2026)
 - automatické oštření změny verze API
 - přidání logování odpovědi pokud dojde k chybě při volání API
-
-v1.5.7 (25.7.2026)
-- update verze API
-
-v1.5.6 (12.7.2026)
-- přidání možnosti playlistu se skupinou kanálů
-- oprava chování při disablování chování např. po resetu kanálů

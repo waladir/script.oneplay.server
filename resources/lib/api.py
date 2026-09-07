@@ -242,8 +242,16 @@ class API:
                 for account in (group.get('accounts') or [])
                 if account.get('accountId')
             ]
-            account = next((item for item in accounts if item.get('isActive')), None)
-            account = account or (accounts[0] if accounts else {})
+            try:
+                account_index = int(get_config_value('poradi_sluzby'))
+            except (TypeError, ValueError):
+                account_index = -1
+            if not 1 <= account_index <= len(accounts):
+                account_index = -1
+            if account_index > 0:
+                account = accounts[account_index - 1]
+            else:
+                account = accounts[-1] if accounts else {}
             account_id = account.get('accountId')
 
         if not account_id:
@@ -259,6 +267,7 @@ class API:
         }
         response = self.call_api('user.login.step', data=post_account)
         return self._check_response(response, 'Problém při výběru účtu')
+    
     def user_device_change(self, id, name, session):
         """Přejmenování zařízení"""
         post = {"payload": {"id": id, "name": name}}

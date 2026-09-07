@@ -41,27 +41,28 @@ def get_config_value(setting):
         return xbmcaddon.Addon().getSetting(setting)
 
     config_file = os.path.join(get_script_path(), 'config.txt')
+    defaults = {
+        'WEBSERVER_IP': '0.0.0.0',
+        'WEBSERVER_PORT': 8082,
+        'EPG_DNU_ZPETNE': 1,
+        'EPG_DNU_DOPREDU': 1,
+        'INTERVAL_STAHOVANI_EPG': 0,
+        'ODSTRANIT_HD': 0,
+        'POUZIVAT_CISLA_KANALU': 0,
+        'PORADI_SLUZBY': -1,
+        'PIN': '4321',
+        'PROFILE_PIN': '4321',
+        'DEBUG': 0,
+        'CESTA_FFMPEG': '/usr/bin/ffmpeg',
+        'AUTH_USER': '',
+        'AUTH_PASS': '',
+    }
+    
     if is_docker() and not os.path.exists(config_file):
-        defaults = {
-            'WEBSERVER_IP': '0.0.0.0',
-            'WEBSERVER_PORT': 8082,
-            'EPG_DNU_ZPETNE': 1,
-            'EPG_DNU_DOPREDU': 1,
-            'INTERVAL_STAHOVANI_EPG': 0,
-            'ODSTRANIT_HD': 0,
-            'POUZIVAT_CISLA_KANALU': 0,
-            'PORADI_SLUZBY': -1,
-            'PIN': '4321',
-            'PROFILE_PIN': '4321',
-            'DEBUG': 0,
-            'CESTA_FFMPEG': '/usr/bin/ffmpeg',
-            'AUTH_USER': '',
-            'AUTH_PASS': '',
-        }
         return os.getenv(setting.upper(), defaults.get(setting.upper()))
 
     with open(config_file, encoding='utf-8') as file:
-        return json.load(file).get(setting)
+        return json.load(file).get(setting, defaults.get(setting.upper()))
 
 
 def log_message(message):
