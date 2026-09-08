@@ -9,7 +9,7 @@ from urllib.parse import quote, unquote, urlencode
 from bottle import HTTPResponse, TEMPLATE_PATH, hook, post, request, response, route, run, static_file, template
 
 from resources.lib.session import Session
-from resources.lib.channels import load_channels, load_diasbled_channels, save_disabled_channels
+from resources.lib.channels import load_channels, load_disabled_channels, save_disabled_channels
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
 from resources.lib.stream import get_live, get_archive, rewrite_manifest
 from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist
@@ -334,12 +334,14 @@ def config():
 
 @route('/channel/<channel>/<status>')
 def channel(channel, status):
-    disabled_channels = load_diasbled_channels()
-    if status == 'disable' and channel not in disabled_channels:
-        disabled_channels.append(channel)
-    elif status == 'enable' and channel in disabled_channels:
-        disabled_channels.remove(channel)
-    save_disabled_channels(disabled_channels)
+    disabled_channels = set(load_disabled_channels())
+
+    if status == "disable":
+        disabled_channels.add(channel)
+    elif status == "enable":
+        disabled_channels.discard(channel)
+
+    save_disabled_channels(list(disabled_channels))
 
 @route('/')
 @post('/')

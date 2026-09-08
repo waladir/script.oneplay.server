@@ -102,7 +102,7 @@ def save_channels(channels):
     settings.save_json_data({'filename': 'channels.txt', 'description': 'kanálů'}, data)
 
 
-def load_diasbled_channels():
+def load_disabled_channels():
     settings = Settings()
     raw_data = settings.load_json_data({'filename': 'disabled_channels.txt', 'description': 'zakázaných kanálů'})
     try:

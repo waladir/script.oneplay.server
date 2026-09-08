@@ -59,8 +59,15 @@ def get_config_value(setting):
     }
     
     if is_docker() and not os.path.exists(config_file):
-        return os.getenv(setting.upper(), defaults.get(setting.upper()))
-
+        env_name = setting.upper()
+        secret_file = os.getenv(f'{env_name}_FILE')
+        if secret_file:
+            try:
+                with open(secret_file, encoding='utf-8') as file:
+                    return file.read().rstrip('\r\n')
+            except Exception:                
+                pass
+        return os.getenv(env_name, defaults.get(env_name))
     with open(config_file, encoding='utf-8') as file:
         return json.load(file).get(setting, defaults.get(setting.upper()))
 
