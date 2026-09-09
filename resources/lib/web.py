@@ -176,7 +176,7 @@ def play(channel):
         stream, timeshift = get_live(channel), 0
     response.content_type = 'application/x-mpegURL'
     if timeshift > 0:
-        return rewrite_manifest(stream, (), timeshift)
+        return rewrite_manifest(stream, get_base_url(), timeshift)
     return rewrite_manifest(stream, get_base_url())
 
 # UPRAVENÁ FUNKCE: číselné ID kanálu, manifest proxy, timeshift, offset

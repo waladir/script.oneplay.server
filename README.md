@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v2.1.3 (9.9.2026)
+- oprava timeshiftu u živého vysílání
+
 v2.1.2 (8.9.2026)
 - oprava timeshiftu u živého vysílání
 - podpora načítání konfigurace z Docker secrets
@@ -51,6 +54,3 @@ v2.1.0 (3.9.2026)
 
 v2.0.2 (3.9.2026)
 - úprava JS pro kopírování odkazů
-
-v2.0.0 (29.8.2026)
-- refaktoring kódu
