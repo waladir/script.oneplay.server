@@ -11,6 +11,7 @@ from resources.lib.utils import display_message, Settings
 
 # SHARED: Oneplay Server, TVheadend
 def get_channels():
+    disabled_channels = load_disabled_channels()
     md_channels = {
         'Oneplay Sport 1': 8,
         'Oneplay Sport 2': 8,
@@ -51,7 +52,7 @@ def get_channels():
             'logo': image,
             'logosq': imagesq,
             'adult': 'adult' in flags,
-            'visible': True,
+            'visible': channel_id not in disabled_channels,
         }
 
     channel_number = 1000
@@ -67,7 +68,7 @@ def get_channels():
                 'logo': channel['logo'],
                 'logosq': channel['logosq'],
                 'adult': channel['adult'],
-                'visible': True,
+                'visible': channel_id not in disabled_channels,
             }
             channel_number += 1
     return channels

@@ -1,3 +1,6 @@
+v2.1.4 (13.9.2026)
+- oprava disablování při refreshi kanálů
+
 v2.1.3 (9.9.2026)
 - oprava timeshiftu u živého vysílání
 
@@ -12,6 +15,3 @@ v2.1.1 (7.9.2026)
 
 v2.1.0 (3.9.2026)
 - přidaná podpora timeshiftu a přetáčení (od sedlin2)
-
-v2.0.2 (3.9.2026)
-- úprava JS pro kopírování odkazů
