@@ -1,4 +1,4 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="2.1.4">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="2.1.5">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
@@ -15,6 +15,9 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v2.1.5 (16.9.2026)
+- ošetření 403 při parsování manifestu
+
 v2.1.4 (13.9.2026)
 - oprava disablování při refreshi kanálů
 
@@ -29,9 +32,6 @@ v2.1.2 (8.9.2026)
 v2.1.1 (7.9.2026)
 - oprava načítání účtů
 - defaultní hodnoty nastavení (i mimo docker a Kodi)
-
-v2.1.0 (3.9.2026)
-- přidaná podpora timeshiftu a přetáčení (od sedlin2)
     </news>
     <assets>
         <icon>icon.png</icon>

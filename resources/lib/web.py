@@ -5,8 +5,9 @@ import hmac
 import json
 import os
 from urllib.parse import quote, unquote, urlencode
+from urllib.error import HTTPError
 
-from bottle import HTTPResponse, TEMPLATE_PATH, hook, post, request, response, route, run, static_file, template
+from bottle import HTTPResponse, TEMPLATE_PATH, hook, post, request, response, route, run, static_file, template, redirect
 
 from resources.lib.session import Session
 from resources.lib.channels import load_channels, load_disabled_channels, save_disabled_channels
@@ -27,6 +28,13 @@ def get_base_url(include_auth=False):
     auth_prefix = quote(auth_user, safe='') + ':' + quote(auth_pass, safe='') + '@'
     return request.urlparts.scheme + '://' + auth_prefix + request.urlparts.netloc
 
+def handle_manifest(stream):
+    try:
+        return rewrite_manifest(stream, get_base_url())
+    except HTTPError as e:
+        if e.code == 403:
+            return redirect(stream)
+        return HTTPResponse(body=str(e), status=e.code)
 
 @hook('before_request')
 def check_basic_auth():
@@ -177,7 +185,7 @@ def play(channel):
     response.content_type = 'application/x-mpegURL'
     if timeshift > 0:
         return rewrite_manifest(stream, get_base_url(), timeshift)
-    return rewrite_manifest(stream, get_base_url())
+    return handle_manifest(stream)
 
 # UPRAVENÁ FUNKCE: číselné ID kanálu, manifest proxy, timeshift, offset
 @route('/play_num/<channel>')
@@ -202,7 +210,7 @@ def play_num(channel):
     response.content_type = 'application/x-mpegURL'
     if timeshift > 0:
         return rewrite_manifest(stream, get_base_url(), timeshift)
-    return rewrite_manifest(stream, get_base_url())
+    return handle_manifest(stream)
 
 # NOVÁ FUNKCE: proxy HLS playlistů a segmentů pro timeshift.
 @route('/proxy_hls')
