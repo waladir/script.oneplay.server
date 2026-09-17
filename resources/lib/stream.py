@@ -189,6 +189,10 @@ def get_archive(channel_name, start_ts, end_ts, offset=0):
         parsed_url = urlparse(url)
         query = parse_qs(parsed_url.query)
         if 'begin' in query:
-            query['begin'] = [str(int(query['begin'][0]) + total_offset)]
+            target_begin = start_ts + offset
+            new_begin = max(int(query['begin'][0]), target_begin)
+            if 'end' in query:
+                new_begin = min(new_begin, int(query['end'][0]) - 1)
+            query['begin'] = [str(new_begin)]            
             url = urlunparse(parsed_url._replace(query=urlencode(query, doseq=True)))
     return url, 0

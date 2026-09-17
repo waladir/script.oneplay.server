@@ -13,7 +13,7 @@ from resources.lib.session import Session
 from resources.lib.channels import load_channels, load_disabled_channels, save_disabled_channels
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
 from resources.lib.stream import get_live, get_archive, rewrite_manifest
-from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist
+from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist, log_message
 from resources.lib.api import API
 
 
@@ -34,7 +34,11 @@ def handle_manifest(stream):
     except HTTPError as e:
         if e.code == 403:
             return redirect(stream)
+        log_message(f"Chyba při čtení manifestu: {e.code} > {e}")
         return HTTPResponse(body=str(e), status=e.code)
+    except Exception as e:
+        log_message(f"Neočekávaná chyba při čtení manifestu: {e}")
+        raise
 
 @hook('before_request')
 def check_basic_auth():

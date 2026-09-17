@@ -37,6 +37,10 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+V2.1.6 (17.9.2026)
+- úprava timeshiftu
+- úprava ošetření výjimky při stažení manifestu
+
 v2.1.5 (16.9.2026)
 - ošetření 403 při parsování manifestu
 
@@ -50,7 +54,3 @@ v2.1.2 (8.9.2026)
 - oprava timeshiftu u živého vysílání
 - podpora načítání konfigurace z Docker secrets
 - optimalizace enablování/disablování kanálů
-
-v2.1.1 (7.9.2026)
-- oprava načítání účtů
-- defaultní hodnoty nastavení (i mimo docker a Kodi)

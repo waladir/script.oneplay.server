@@ -1,3 +1,7 @@
+V2.1.6 (17.9.2026)
+- úprava timeshiftu
+- úprava ošetření výjimky při stažení manifestu
+
 v2.1.5 (16.9.2026)
 - ošetření 403 při parsování manifestu
 
@@ -11,7 +15,3 @@ v2.1.2 (8.9.2026)
 - oprava timeshiftu u živého vysílání
 - podpora načítání konfigurace z Docker secrets
 - optimalizace enablování/disablování kanálů
-
-v2.1.1 (7.9.2026)
-- oprava načítání účtů
-- defaultní hodnoty nastavení (i mimo docker a Kodi)
