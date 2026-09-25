@@ -1,4 +1,4 @@
-﻿# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 # SHARED: Oneplay, Oneplay Server, TVheadend
 import gzip
 import json
@@ -188,6 +188,7 @@ class API:
                 self.error_handling(error_detail)
         return response.get('result', {}).get('data')
 
+    # SHARED: funkce je rozdílná ve Oneplay a Oneplay Server/TVheadend
     def user_login_step(self, username, password):
         """Přihlášení s výběrem účtu podle prostředí, ve kterém API běží."""
         post = {
@@ -253,7 +254,8 @@ class API:
             else:
                 account = accounts[-1] if accounts else {}
             account_id = account.get('accountId')
-
+            if get_config_value('debug') in (1, '1', -1, '-1', 'true'):
+                log_message('Oneplay > Dostupné služby: ' + ', '.join(f"{idx}. {a.get('name')} ({a.get('accountId')})" + (' [POUŽITÁ]' if a.get('accountId') == account_id else '') for idx, a in enumerate(accounts, start=1)))
         if not account_id:
             self.error_handling('Nebyl nalezen žádný dostupný účet')
         post_account = {
@@ -305,7 +307,7 @@ class API:
             return result.get('data')
         if result.get('message') == 'Profil nenalezen' and not is_retry:
             from resources.lib.profiles import get_profile_id
-            new_profile_id = get_profile_id(session, reset=True)
+            new_profile_id = get_profile_id(session)
             return self.user_profile_select(new_profile_id, profile_pin, session, is_retry=True)
         error_detail = result.get('message', 'Neznámá chyba')
         display_message('Chyba při výběru profilu')

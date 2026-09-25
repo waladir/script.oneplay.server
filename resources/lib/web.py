@@ -5,14 +5,14 @@ import hmac
 import json
 import os
 from urllib.parse import quote, unquote, urlencode
-from urllib.error import HTTPError
+from urllib.error import HTTPError, URLError
 
 from bottle import HTTPResponse, TEMPLATE_PATH, hook, post, request, response, route, run, static_file, template, redirect
 
 from resources.lib.session import Session
 from resources.lib.channels import load_channels, load_disabled_channels, save_disabled_channels
 from resources.lib.epg import get_epg, load_epg, get_live_epg, get_channel_epg
-from resources.lib.stream import get_live, get_archive, rewrite_manifest
+from resources.lib.stream import get_live, get_archive, rewrite_manifest, FALLBACK_URL, get_channel_id
 from resources.lib.utils import get_config_value, get_script_path, get_version, check_client_network, check_ip_whitelist, log_message
 from resources.lib.api import API
 
@@ -28,20 +28,70 @@ def get_base_url(include_auth=False):
     auth_prefix = quote(auth_user, safe='') + ':' + quote(auth_pass, safe='') + '@'
     return request.urlparts.scheme + '://' + auth_prefix + request.urlparts.netloc
 
-def handle_manifest(stream):
+def handle_manifest(stream, force_proxy=False):
     try:
-        return rewrite_manifest(stream, get_base_url())
+        return rewrite_manifest(stream, get_base_url(), force_proxy=force_proxy or stream == FALLBACK_URL)
     except HTTPError as e:
         if e.code == 403:
+            log_message(f"Chyba 403 při čtení manifestu: {stream}. Zkusím přesměrovat.")            
             return redirect(stream)
         log_message(f"Chyba při čtení manifestu: {e.code} > {e}")
-        return HTTPResponse(body=str(e), status=e.code)
+        raise
     except Exception as e:
         log_message(f"Neočekávaná chyba při čtení manifestu: {e}")
-        raise
+        raise e
+
+def add_start_at_begin(lines):
+    if not any(line.startswith('#EXTINF:') for line in lines):
+        return lines
+    lines = [line for line in lines if not line.startswith('#EXT-X-START:')]
+    extm3u_idx = next((idx for idx, line in enumerate(lines) if line.startswith('#EXTM3U')), None)
+    if extm3u_idx is not None:
+        lines.insert(extm3u_idx + 1, '#EXT-X-START:TIME-OFFSET=0,PRECISE=YES')
+    return lines
+
+# nalezení navazujícího pořadu v archivu, když aktuální pořad na CDN chybí.
+def get_next_archive_stream(channel, query):
+    channel_id = get_channel_id(channel)
+    if not channel_id:
+        return None, 0
+    try:
+        start_ts = int(query.get('start_ts') or query.get('utc') or 0)
+    except ValueError:
+        return None, 0
+    epg = get_channel_epg(channel_id, start_ts, start_ts + 24 * 60 * 60)
+    next_key = next((k for k in sorted(epg) if k > start_ts), None)
+    if next_key is None:
+        return None, 0
+    next_item = epg[next_key]
+    next_stream, next_timeshift = get_archive(channel, next_key, next_item['endts'])
+    return (next_stream, next_timeshift) if next_stream != FALLBACK_URL else (None, 0)
+
+
+def parse_archive_query(query):
+    has_start_end = 'start_ts' in query or 'end_ts' in query
+    has_utc = 'utc' in query or 'lutc' in query
+    if not has_start_end and not has_utc:
+        return None, None
+    if has_start_end and not ('start_ts' in query and 'end_ts' in query):
+        return None, 'Parametry start_ts a end_ts musí být uvedeny společně'
+    if has_utc and not ('utc' in query and 'lutc' in query):
+        return None, 'Parametry utc a lutc musí být uvedeny společně'
+    start_name, end_name = ('start_ts', 'end_ts') if has_start_end else ('utc', 'lutc')
+    try:
+        start_ts = int(query[start_name])
+        end_ts = int(query[end_name])
+        offset = int(query.get('offset', 0))
+    except (TypeError, ValueError):
+        return None, 'Archivní parametry musí být celá čísla'
+    if start_ts < 0 or end_ts <= start_ts or offset < 0:
+        return None, 'Neplatný rozsah archivních parametrů'
+    return (start_ts, end_ts, offset), None
 
 @hook('before_request')
 def check_basic_auth():
+    if request.path == '/health':
+        return    
     auth_user = get_config_value('auth_user')
     auth_pass = get_config_value('auth_pass')
     if not auth_user or not auth_pass:
@@ -60,6 +110,10 @@ def check_basic_auth():
     err = HTTPResponse('Přístup odepřen', 401)
     err.set_header('WWW-Authenticate', 'Basic realm="Oneplay Server"')
     raise err
+
+@route('/health')
+def health():
+    return 'OK'
 
 @route('/epg')
 def epg():
@@ -150,16 +204,19 @@ def playlist_tvheadend():
     response.content_type = 'text/plain; charset=UTF-8'
     return output
 
-# UPRAVENÁ FUNKCE: kompatibilní endpoint /stream a nové návratové rozhraní archivu.
 @route('/stream/<channel>')
-@route('/stream_url/<channel>')
 def stream_url(channel):
     try:
         channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
-        if 'start_ts' in request.query and 'end_ts' in request.query:
-            url, _ = get_archive(channel, request.query['start_ts'], request.query['end_ts'])
-        elif 'utc' in request.query and 'lutc' in request.query:
-            url, _ = get_archive(channel, request.query['utc'], request.query['lutc'])
+        if channel not in load_channels() and get_channel_id(channel) is None:
+            response.content_type = 'application/json'
+            response.set_header('Access-Control-Allow-Origin', '*')
+            return json.dumps({'url': None, 'error': 'Kanál nenalezen'})        
+        archive_params, error = parse_archive_query(request.query)
+        if error:
+            return HTTPResponse(error, 400)
+        if archive_params:
+            url, _ = get_archive(channel, archive_params[0], archive_params[1])
         else:
             url = get_live(channel)
         if not url:
@@ -169,27 +226,42 @@ def stream_url(channel):
         response.content_type = 'application/json'
         response.set_header('Access-Control-Allow-Origin', '*')
         return json.dumps({'url': url})
-    except Exception as error:
+    except (Exception, SystemExit) as error:
         response.content_type = 'application/json'
         response.set_header('Access-Control-Allow-Origin', '*')
         response.status = 200
-        return json.dumps({'url': None, 'error': str(error)})
+        return json.dumps({'url': None, 'error': str(error) or 'Chyba přihlášení nebo získání streamu'})
 
 # UPRAVENÁ FUNKCE: manifest proxy, timeshift, offset
 @route('/play/<channel>')
 def play(channel):
     channel = unquote(channel.replace('.m3u8', '')).replace('sleš', '/')
-    offset = request.query.get('offset', 0)
-    if 'start_ts' in request.query and 'end_ts' in request.query:
-        stream, timeshift = get_archive(channel, request.query['start_ts'], request.query['end_ts'], offset)
-    elif 'utc' in request.query and 'lutc' in request.query:
-        stream, timeshift = get_archive(channel, request.query['utc'], request.query['lutc'], offset)
+    if channel not in load_channels() and get_channel_id(channel) is None:
+        return HTTPResponse('Kanál nenalezen', 404)    
+    archive_params, error = parse_archive_query(request.query)
+    if error:
+        return HTTPResponse(error, 400)
+    is_archive_request = archive_params is not None
+    if archive_params:
+        stream, timeshift = get_archive(channel, *archive_params)
     else:
         stream, timeshift = get_live(channel), 0
     response.content_type = 'application/x-mpegURL'
-    if timeshift > 0:
-        return rewrite_manifest(stream, get_base_url(), timeshift)
-    return handle_manifest(stream)
+    try:
+        if timeshift > 0:
+            return rewrite_manifest(stream, get_base_url(), timeshift)
+        return handle_manifest(stream)
+    except HTTPError as e:
+        if e.code in (502, 503, 504) and is_archive_request:
+            # CDN nemá zdroj pro tento pořad (přechod mezi dvěma catchupy) -> zkusit navazující pořad místo pádu na živé vysílání
+            next_stream, next_timeshift = get_next_archive_stream(channel, request.query)            
+            if next_stream:
+                log_message(f"Chyba {e.code} při čtení manifestu: {stream}. Přeskakuji na další pořad v archivu.")
+                if next_timeshift > 0:
+                    # navazující pořad právě běží živě -> pokračovat od jeho začátku, ne od live okraje
+                    return rewrite_manifest(next_stream, get_base_url(), next_timeshift)
+                return handle_manifest(next_stream)
+            return HTTPResponse(body=str(e), status=e.code)
 
 # UPRAVENÁ FUNKCE: číselné ID kanálu, manifest proxy, timeshift, offset
 @route('/play_num/<channel>')
@@ -202,19 +274,7 @@ def play_num(channel):
     channel_name = next((item['name'] for item in channels.values() if item['channel_number'] == channel_number), None)
     if channel_name is None:
         return HTTPResponse('Kanál nenalezen', 404)
-    if get_config_value('odstranit_hd') in (1, '1', 'true'):
-        channel_name = channel_name.replace(' HD', '')
-    offset = request.query.get('offset', 0)
-    if 'start_ts' in request.query and 'end_ts' in request.query:
-        stream, timeshift = get_archive(channel_name, request.query['start_ts'], request.query['end_ts'], offset)
-    elif 'utc' in request.query and 'lutc' in request.query:
-        stream, timeshift = get_archive(channel_name, request.query['utc'], request.query['lutc'], offset)
-    else:
-        stream, timeshift = get_live(channel_name), 0
-    response.content_type = 'application/x-mpegURL'
-    if timeshift > 0:
-        return rewrite_manifest(stream, get_base_url(), timeshift)
-    return handle_manifest(stream)
+    return play(channel_name)
 
 # NOVÁ FUNKCE: proxy HLS playlistů a segmentů pro timeshift.
 @route('/proxy_hls')
@@ -227,19 +287,27 @@ def proxy_hls():
     if not url:
         response.status = 400
         return 'Missing url parameter'
-    req = Request(url, headers={'User-Agent': API().UA, 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'})
-    resp = urlopen(req)
-    data = resp.read()
-    if resp.headers.get('Content-Encoding') == 'gzip':
+    req = Request(url, headers={'User-Agent': API().UA, 'Accept': '*/*', 'Accept-Encoding': 'gzip'})
+    try:
+        with urlopen(req, timeout=20) as resp:
+            final_url = resp.geturl() or url
+            data = resp.read()
+            content_encoding = resp.headers.get('Content-Encoding')
+            content_type = resp.headers.get('Content-Type', 'application/x-mpegURL')
+    except (HTTPError, URLError) as e:
+        log_message(f"Chyba proxy_hls při stahování {url}: {e}")
+        response.status = 502
+        response.content_type = 'application/json'
+        return json.dumps({'error': str(e)})
+    if content_encoding == 'gzip':    
         data = gzip.decompress(data)
-    content_type = resp.headers.get('Content-Type', 'application/x-mpegURL')
     response.content_type = content_type
-    if not (url.endswith('.m3u8') or 'mpegURL' in content_type or 'mpegurl' in content_type):
+    if not (final_url.endswith('.m3u8') or 'mpegURL' in content_type or 'mpegurl' in content_type):    
         return data
     server_base = request.urlparts.scheme + '://' + request.urlparts.netloc
-    parsed_parent = _urlparse(url)
+    parsed_parent = _urlparse(final_url)
     parent_query = _parse_qs(parsed_parent.query)
-    base_url = url.rsplit('/', 1)[0] + '/'
+    base_url = final_url.rsplit('/', 1)[0] + '/'
     base_url = base_url.split('?')[0]
     if not base_url.endswith('/'):
         base_url += '/'
@@ -253,62 +321,16 @@ def proxy_hls():
         merged.update(sub_params)
         return _urlunparse(parsed._replace(query=_urlencode(merged, doseq=True)))
 
-    ts_offset = request.query.get('ts_offset', '')
-    ts_param = f'&ts_offset={ts_offset}' if ts_offset else ''
+    start_at_begin = request.query.get('start_at_begin') == '1'
+    start_param = '&start_at_begin=1' if start_at_begin else ''
 
     def make_proxy_url(uri):
-        return f'{server_base}/proxy_hls?url={_urlquote(_merge_url(uri), safe="")}{ts_param}'
+        return f'{server_base}/proxy_hls?url={_urlquote(_merge_url(uri), safe="")}{start_param}'
 
     text = data.decode('utf-8')
     lines = text.split('\n')
-
-    # If ts_offset is set, convert live playlist to VOD starting at the desired position
-    if ts_offset and '#EXTINF' in text:
-        offset_secs = int(ts_offset)
-        segments = []
-        i = 0
-        while i < len(lines):
-            if lines[i].startswith('#EXTINF:'):
-                try:
-                    dur = float(lines[i].split(':')[1].split(',')[0])
-                except (ValueError, IndexError):
-                    dur = 0
-                seg_start = i
-                seg_end = i + 1
-                if seg_end < len(lines) and lines[seg_end].strip() and not lines[seg_end].startswith('#'):
-                    seg_end += 1
-                segments.append((seg_start, seg_end, dur))
-                i = seg_end
-            else:
-                i += 1
-        if segments:
-            total = sum(s[2] for s in segments)
-            skip_duration = total - offset_secs
-            if skip_duration > 0:
-                cumulative = 0
-                first_keep = 0
-                for idx, (start, end, dur) in enumerate(segments):
-                    cumulative += dur
-                    if cumulative >= skip_duration:
-                        first_keep = idx
-                        break
-                if first_keep > 0:
-                    cut_line = segments[first_keep][0]
-                    header = lines[:segments[0][0]]
-                    updated_header = []
-                    for h in header:
-                        if h.startswith('#EXT-X-MEDIA-SEQUENCE:'):
-                            try:
-                                orig_seq = int(h.split(':')[1].strip())
-                                updated_header.append(f'#EXT-X-MEDIA-SEQUENCE:{orig_seq + first_keep}')
-                            except (ValueError, IndexError):
-                                updated_header.append(h)
-                        else:
-                            updated_header.append(h)
-                    lines = updated_header + lines[cut_line:]
-        # Always mark as VOD so player starts from first segment
-        if not any(l.strip() == '#EXT-X-ENDLIST' for l in lines):
-            lines.append('#EXT-X-ENDLIST')
+    if start_at_begin:
+        lines = add_start_at_begin(lines)
 
     result = []
     for line in lines:
@@ -325,7 +347,6 @@ def proxy_hls():
                 result[-1] = _merge_url(uri)
     return '\n'.join(result)
 
-
 @route('/img/<image>')
 def add_image(image):
     return static_file(image, root=os.path.join(get_script_path(), 'resources', 'templates'))
@@ -333,7 +354,7 @@ def add_image(image):
 @route('/config')
 def config():
     config = {}
-    params = ['username', 'password', 'profile', 'deviceid', 'webserver_ip', 'webserver_port', 'epg_dnu_zpetne', 'epg_dnu_dopredu', 'interval_stahovani_epg', 'odstranit_hd', 'pouzivat_cisla_kanalu', 'poradi_sluzby', 'pin', 'debug', 'cesta_ffmpeg', 'auth_user', 'auth_pass']
+    params = ['username', 'password', 'profile', 'deviceid', 'webserver_port', 'epg_dnu_zpetne', 'epg_dnu_dopredu', 'interval_stahovani_epg', 'odstranit_hd', 'pouzivat_cisla_kanalu', 'poradi_sluzby', 'pin', 'debug', 'cesta_ffmpeg', 'auth_user', 'auth_pass']
     for param in params:
         value = get_config_value(param)
         value = 'není' if value is None else value

@@ -93,4 +93,4 @@ class Session:
         settings = Settings()
         settings.reset_json_data(file_info=self.SESSION_FILE)
         self.create_session()
-        display_message('Byla vytvořena nová session')
+        display_message('Byla vytvořena nová session', 'info')

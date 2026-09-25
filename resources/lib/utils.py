@@ -6,6 +6,7 @@ import os
 import socket
 from xml.dom import minidom
 from xml.parsers.expat import ExpatError
+from datetime import datetime
 
 appVersion = 'R11.33'
 
@@ -42,7 +43,6 @@ def get_config_value(setting):
 
     config_file = os.path.join(get_script_path(), 'config.txt')
     defaults = {
-        'WEBSERVER_IP': '0.0.0.0',
         'WEBSERVER_PORT': 8082,
         'EPG_DNU_ZPETNE': 1,
         'EPG_DNU_DOPREDU': 1,
@@ -78,7 +78,7 @@ def log_message(message):
 
         xbmc.log('Oneplay Server > ' + message)
     else:
-        print(message)
+        print(f"[{datetime.now().strftime('%d.%m.%Y %H:%M:%S')}] {message}")
 
 
 def display_message(message, message_type = 'error'):
@@ -87,7 +87,7 @@ def display_message(message, message_type = 'error'):
         xbmcgui.Dialog().notification('Oneplay Server', message, xbmcgui.NOTIFICATION_ERROR, 4000)
     else:
         if message != 'Byla vytvořena nová session':
-            print(message)
+            print(f"[{datetime.now().strftime('%d.%m.%Y %H:%M:%S')}] {message}")
 
 
 def display_dialog_yn(heading, message):

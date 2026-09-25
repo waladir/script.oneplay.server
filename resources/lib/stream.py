@@ -9,9 +9,13 @@ from resources.lib.channels import load_channels
 from resources.lib.session import Session
 from resources.lib.api import API
 from resources.lib.epg import get_channel_epg
-from resources.lib.utils import get_config_value
+from resources.lib.utils import get_config_value, log_message
 
 FALLBACK_URL = 'http://sledovanietv.sk/download/noAccess-cs.m3u8'
+
+
+def set_url_begin(url, begin):
+    return re.sub(r'([?&]begin=)[^&#]*', rf'\g<1>{int(begin)}', url, count=1)
 
 
 def get_channel_id(channel_name):
@@ -81,20 +85,19 @@ def get_live(id):
                     url = source
     return url
 
-# NOVÁ FUNKCE: přepis běžného i timeshift HLS manifestu.
-def rewrite_manifest(url, server_base_url, offset_seconds=0):
-    """Načte master manifest a přepíše URI na absolutní nebo lokálně proxyované."""
-    parsed_master = urlparse(url)
-    master_query = parse_qs(parsed_master.query)
-    headers = {'User-Agent': API().UA, 'Accept': '*/*', 'Accept-Encoding': 'gzip, deflate'}
+# přepis běžného i timeshift HLS manifestu.
+def rewrite_manifest(url, server_base_url, offset_seconds=0, force_proxy=False):
+    """Načte master manifest a přepiše URI na absolutní nebo lokálně proxyované."""
+    headers = {'User-Agent': API().UA, 'Accept': '*/*', 'Accept-Encoding': 'gzip'}
     with urlopen(Request(url, headers=headers), timeout=20) as manifest_response:
         final_url = manifest_response.geturl() or url
         data = manifest_response.read()
         if manifest_response.headers.get('Content-Encoding') == 'gzip':
             data = gzip.decompress(data)
+    master_query = parse_qs(urlparse(final_url).query)            
     base_url = final_url.rsplit('/', 1)[0] + '/'
     lines = data.decode('utf-8').splitlines()
-    use_proxy = int(offset_seconds) > 0
+    use_proxy = int(offset_seconds) > 0 or force_proxy
 
     def rewrite_uri(uri):
         absolute_uri = urljoin(base_url, uri)
@@ -103,25 +106,26 @@ def rewrite_manifest(url, server_base_url, offset_seconds=0):
         query.update(parse_qs(parsed_uri.query))
         absolute_uri = urlunparse(parsed_uri._replace(query=urlencode(query, doseq=True)))
         if use_proxy:
-            return (server_base_url + '/proxy_hls?url=' + quote(absolute_uri, safe='')
-                    + '&ts_offset=' + str(int(offset_seconds)))
+            proxy_url = server_base_url + '/proxy_hls?url=' + quote(absolute_uri, safe='')
+            if int(offset_seconds) > 0:
+                proxy_url += '&start_at_begin=1'
+            return proxy_url
         return absolute_uri
 
     result = []
+    variant_count = 0
+    media_uri_count = 0    
     for line in lines:
         if 'URI="' in line:
+            media_uri_count += 1
             line = re.sub(
                 r'URI="([^"]+)"',
                 lambda match: 'URI="' + rewrite_uri(match.group(1)) + '"',
                 line,
             )
         result.append(line)
-        if line.startswith('#EXTM3U'):
-            if use_proxy:
-                result.append(f'#EXT-X-START:TIME-OFFSET=-{int(offset_seconds)},PRECISE=YES')
-            else:
-                result.append('#EXT-X-START:TIME-OFFSET=-3,PRECISE=NO')
-        elif line.strip() and not line.startswith('#'):
+        if line.strip() and not line.startswith('#'):
+            variant_count += 1            
             result[-1] = rewrite_uri(line.strip())
     return '\n'.join(result)
 
@@ -155,7 +159,10 @@ def get_archive(channel_name, start_ts, end_ts, offset=0):
     seek_offset = start_ts - epg_key
     total_offset = offset + seek_offset
     if epg_item['endts'] > int(time.time()) - 10:
-        return get_live(channel_name), max(0, int(time.time()) - start_ts)
+        live_url = get_live(channel_name)
+        if 'begin=' in live_url:
+            return set_url_begin(live_url, start_ts + offset), max(1, int(time.time()) - start_ts - offset)
+        return live_url, max(0, int(time.time()) - start_ts)
 
     if channels[channel_id].get('adult'):
         pin = get_config_value('pin') or '1234'
@@ -189,10 +196,10 @@ def get_archive(channel_name, start_ts, end_ts, offset=0):
         parsed_url = urlparse(url)
         query = parse_qs(parsed_url.query)
         if 'begin' in query:
+            # CDN's own "begin" rarely equals epg_key, so target the absolute timestamp instead of shifting it
             target_begin = start_ts + offset
             new_begin = max(int(query['begin'][0]), target_begin)
             if 'end' in query:
                 new_begin = min(new_begin, int(query['end'][0]) - 1)
-            query['begin'] = [str(new_begin)]            
-            url = urlunparse(parsed_url._replace(query=urlencode(query, doseq=True)))
+            url = set_url_begin(url, new_begin)
     return url, 0

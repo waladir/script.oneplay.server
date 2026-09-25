@@ -7,7 +7,6 @@ services:
       USERNAME: user
       PASSWORD: pass
       DEVICEID: device
-      WEBSERVER_IP: 0.0.0.0
       WEBSERVER_PORT: 8082
       EPG_DNU_ZPETNE: 1
       EPG_DNU_DOPREDU: 1

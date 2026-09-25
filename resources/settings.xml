@@ -11,7 +11,6 @@
                 <setting label="PIN" type="text" id="pin" option="hidden" default="4321"/>
         </category>
 	<category label="Nastavení">
-                <setting label="IP adresa serveru (IP pro automatické zjištění adresy)" type="text" id="webserver_ip" default="127.0.0.1"/>
                 <setting label="Port serveru" type="number" id="webserver_port" default="8082"/>
                 <setting label="Počet dnů pro stahovaní EPG zpětně" type="slider" id="epg_dnu_zpetne" range="1,1,7" default="1" option="int"/>
                 <setting label="Počet dnů pro stahovaní EPG dopředu" type="slider" id="epg_dnu_dopredu" range="1,1,7" default="1" option="int"/>

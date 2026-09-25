@@ -3,7 +3,6 @@
 	"password":"",
 	"profile":"",
 	"deviceid":"",
-	"webserver_ip":"127.0.0.1",
 	"webserver_port":8082,
 	"epg_dnu_zpetne":1,
 	"epg_dnu_dopredu":1,
