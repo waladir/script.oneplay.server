@@ -4,6 +4,7 @@ import binascii
 import hmac
 import json
 import os
+from wsgiref.simple_server import WSGIServer
 from urllib.parse import quote, unquote, urlencode
 from urllib.error import HTTPError, URLError
 
@@ -433,6 +434,16 @@ def page():
         player_enabled=player_enabled,
     )
 
+class TimeoutWSGIServer(WSGIServer):
+    # timeout len pre sockety pripojených klientov - bez neho jedno visiace spojenie
+    # zablokuje celý jednovláknový server; globálny socket.setdefaulttimeout sa
+    # nepoužíva, lebo v Kodi by ovplyvnil aj sockety ostatných doplnkov
+    def get_request(self):
+        conn, addr = super().get_request()
+        conn.settimeout(60)
+        return conn, addr
+
+
 def start_server():
     port = int(get_config_value('webserver_port'))
-    run(host='0.0.0.0', port=port)
+    run(host='0.0.0.0', port=port, server_class=TimeoutWSGIServer)
