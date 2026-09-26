@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+V2.1.8 (25.9.2026)
+- oprava přehrávání z webu
+
 V2.1.7 (25.9.2026)
 - odstranění nepotřebné proměnné webserver_ip z nastavení
 - úpravy a optimalizace timeshiftu a přehrávání archivu
@@ -53,6 +56,3 @@ v2.1.5 (16.9.2026)
 
 v2.1.4 (13.9.2026)
 - oprava disablování při refreshi kanálů
-
-v2.1.3 (9.9.2026)
-- oprava timeshiftu u živého vysílání

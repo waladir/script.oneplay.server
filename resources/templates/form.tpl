@@ -736,7 +736,7 @@
           currentHls = null;
         }
 
-        fetch(`/stream_url/${slug}`, {credentials: 'same-origin'})
+        fetch(`/stream/${slug}`, {credentials: 'same-origin'})
           .then(r => {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
@@ -971,7 +971,7 @@
         if (currentCard) { currentCard.classList.remove('playing'); currentCard = null; }
         if (currentHls) { currentHls.destroy(); currentHls = null; }
 
-        fetch('/stream_url/' + slug + '?start_ts=' + startTs + '&end_ts=' + endTs, {credentials: 'same-origin'})
+        fetch('/stream/' + slug + '?start_ts=' + startTs + '&end_ts=' + endTs, {credentials: 'same-origin'})
           .then(r => {
             if (!r.ok) throw new Error('HTTP ' + r.status);
             return r.json();
