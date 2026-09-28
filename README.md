@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+V2.1.9 (28.9.2026)
+- nastavení timoutu na vlákna webserveru
+
 V2.1.8 (25.9.2026)
 - oprava přehrávání z webu
 
@@ -53,6 +56,3 @@ V2.1.6 (17.9.2026)
 
 v2.1.5 (16.9.2026)
 - ošetření 403 při parsování manifestu
-
-v2.1.4 (13.9.2026)
-- oprava disablování při refreshi kanálů

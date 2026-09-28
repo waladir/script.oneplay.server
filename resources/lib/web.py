@@ -6,6 +6,7 @@ import json
 import os
 from urllib.parse import quote, unquote, urlencode
 from urllib.error import HTTPError, URLError
+from wsgiref.simple_server import WSGIServer
 
 from bottle import HTTPResponse, TEMPLATE_PATH, hook, post, request, response, route, run, static_file, template, redirect
 
@@ -433,6 +434,12 @@ def page():
         player_enabled=player_enabled,
     )
 
+class TimeoutWSGIServer(WSGIServer):
+    def get_request(self):
+        conn, addr = super().get_request()
+        conn.settimeout(120)
+        return conn, addr
+    
 def start_server():
     port = int(get_config_value('webserver_port'))
-    run(host='0.0.0.0', port=port)
+    run(host='0.0.0.0', port=port, server_class=TimeoutWSGIServer)
