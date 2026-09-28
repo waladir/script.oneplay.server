@@ -38,7 +38,7 @@ Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://1
 
 <b><u>Změny</u></b>
 V2.1.9 (28.9.2026)
-- nastavení timoutu na vlákna webserveru
+- nastavení timeoutu na vlákna webserveru
 
 V2.1.8 (25.9.2026)
 - oprava přehrávání z webu
