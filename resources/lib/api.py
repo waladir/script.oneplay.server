@@ -11,6 +11,7 @@ from urllib.error import HTTPError
 from urllib.request import Request, urlopen
 
 from websocket import create_connection
+import time
 
 from resources.lib.utils import (
     Settings,
@@ -26,16 +27,17 @@ from resources.lib.utils import (
 class API:
     def __init__(self):
         self.APIURL = 'https://http.cms.jyxo.cz/api/'
-        self.UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:148.0) Gecko/20100101 Firefox/148.0'
+        self.APPVERSION = 'R11.33'
+        self.BASE_API_VERSION = 'v1.11'
+        self.API_VERSION_FILE = {'filename': 'api_version.txt', 'description': 'verze API'}
+        self.UA_FILE = {'filename': 'ua.txt', 'description': 'UA'}
+        self.load_ua()
         self.HEADERS = {
             'User-Agent': self.UA,
             'Accept-Encoding': 'gzip',
             'Accept': '*/*',
             'Content-type': 'application/json;charset=UTF-8',
         }
-        self.APPVERSION = 'R11.33'
-        self.BASE_API_VERSION = 'v1.11'
-        self.API_VERSION_FILE = {'filename': 'api_version.txt', 'description': 'verze API'}
 
     def get_version(self):
         import requests
@@ -80,7 +82,38 @@ class API:
         data = json.dumps({'api_version': self.api_version})
         settings.save_json_data(file_info=self.API_VERSION_FILE, data=data)
 
-    def call_api(self, api, data, session=None, sensitive=False):
+    def load_ua(self):
+        """Načte session, kontroluje integritu a expiraci"""
+        settings = Settings()
+        data = settings.load_json_data(file_info=self.UA_FILE)
+        if data:
+            try:
+                data = json.loads(data) or {}
+                ua = data.get('ua')
+                valid_to = data.get('valid_to', 0)
+                if ua and int(valid_to) > int(time.time()):
+                    self.UA = ua
+                    return
+            except (AttributeError, TypeError, json.JSONDecodeError, ValueError):
+                pass
+        try:
+            response = urlopen('https://product-details.mozilla.org/1.0/firefox_versions.json', timeout=10)
+            data = response.read()
+            data = json.loads(data) if data else {}
+            version = data.get('LATEST_FIREFOX_VERSION', '148.0')
+            self.UA = f"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:{version}) Gecko/20100101 Firefox/{version}"
+        except Exception:            
+            pass
+        self.save_ua()
+
+    def save_ua(self):
+        """Uloží aktuální UA"""
+        settings = Settings()
+        valid_to = int(time.time() + 60*60*24)
+        data = json.dumps({'ua': self.UA, 'valid_to': valid_to})
+        settings.save_json_data(file_info=self.UA_FILE, data=data)        
+
+    def call_api(self, api, data, session=None, sensitive=False, retry = False):
         """Volání API Oneplay včetně ošetření logování"""
         self.load_api_version()
         url = f"{self.APIURL}{self.api_version}/{api}"
@@ -117,6 +150,7 @@ class API:
                     "serverId": server_id,
                 },
             }
+            request_data = data
             if data:
                 post.update(data)
             post = json.dumps(post).encode("utf-8")
@@ -161,7 +195,9 @@ class API:
         except (HTTPError, socket.timeout, socket.error) as error:
             log_message(f"Oneplay > Network Error: {error}")
             if getattr(error, 'code', None) == 404:
-                self.get_version()
+                if not retry:
+                    self.get_version()
+                    return self.call_api(api, request_data, session=session, sensitive=sensitive, retry=True)
             return {'result': {'status': 'Error', 'message': 'Síťová chyba nebo timeout'}}
         except Exception as error:
             log_message(f"Oneplay > Neočekávaná chyba: {error}")

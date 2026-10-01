@@ -1,3 +1,7 @@
+v2.2.0 (1.10.2026)
+- úprava volání API
+- změny v API Oneplay
+
 V2.1.9 (28.9.2026)
 - nastavení timeoutu na vlákna webserveru
 
@@ -14,6 +18,3 @@ V2.1.7 (25.9.2026)
 V2.1.6 (17.9.2026)
 - úprava timeshiftu
 - úprava ošetření výjimky při stažení manifestu
-
-v2.1.5 (16.9.2026)
-- ošetření 403 při parsování manifestu

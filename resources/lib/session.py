@@ -25,7 +25,7 @@ class Session:
         ) or {}
         step = data.get('step') or {}
         self.token = step.get('bearerToken')
-        current_user = step.get('currentUser') or {}
+        current_user = step.get('currentUser') or set.get('user', {}).get('loggedUser', {})
         current_device = current_user.get('currentDevice') or {}
         device_id = current_device.get('id')
         if device_id:
