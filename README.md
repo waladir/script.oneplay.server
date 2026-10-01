@@ -37,6 +37,9 @@ EPG lze pak stáhnout z http://<adresa nebo jméno serveru>:<port (defaultně 80
 Na http://<adresa nebo jméno serveru>:<port (defaultně 8082)>, např. http://127.0.0.1:8082 je možné stiskem tlačítka vynutit načtení kanálů nebo vytvotvoření nové sessiony.
 
 <b><u>Změny</u></b>
+v2.2.1 (1.10.2026)
+- oprava překlepu
+
 v2.2.0 (1.10.2026)
 - úprava volání API
 - změny v API Oneplay
@@ -53,7 +56,3 @@ V2.1.7 (25.9.2026)
 - přidání endpointu /health pro případný healthcheck
 - úprava URL pro streamování z webu
 - úprava logování
-
-V2.1.6 (17.9.2026)
-- úprava timeshiftu
-- úprava ošetření výjimky při stažení manifestu
