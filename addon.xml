@@ -1,7 +1,8 @@
-﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="2.2.1">
+﻿<addon id="script.oneplay.server" name="Oneplay Server" provider-name="waladir" version="2.2.2">
   <requires>
     <import addon="xbmc.python" version="3.0.0"/>
     <import addon="script.module.bottle"/>
+    <import addon="script.module.requests"/>
     <import addon="script.module.websocket" version="0.5.8"/>    
   </requires>
   <extension library="server.py" point="xbmc.service"/>
@@ -15,6 +16,10 @@ Playlist: http://&lt;server&gt;:&lt;port&gt;/playlist
     <platform>all</platform>
     <source>https://github.com/waladir/script.oneplay.server</source>
     <news>
+v2.2.2 (2.10.2026)
+- doplnění závislosti pro Kodi
+- úprava detekce MD v EPG
+
 v2.2.1 (1.10.2026)
 - oprava překlepu
     
@@ -27,13 +32,6 @@ V2.1.9 (28.9.2026)
 
 V2.1.8 (25.9.2026)
 - oprava přehrávání z webu
-
-V2.1.7 (25.9.2026)
-- odstranění nepotřebné proměnné webserver_ip z nastavení
-- úpravy a optimalizace timeshiftu a přehrávání archivu
-- přidání endpointu /health pro případný healthcheck
-- úprava URL pro streamování z webu
-- úprava logování
     </news>
     <assets>
         <icon>icon.png</icon>

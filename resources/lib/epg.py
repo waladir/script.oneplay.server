@@ -73,7 +73,7 @@ def get_day_epg(from_ts, to_ts, selected_channel_id=None):
                             continue
                         labels = item.get('labels') or []
                         is_multidimensional = any(
-                            label and label.get('name') == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension'
+                            label and (label.get('name') == 'content.plugin_mapper.collection_detail_plugin_mapper.action.multi_dimension' or label.get('name') == 'Vícerozměrný')
                             for label in labels
                         )
                         if is_multidimensional and (not selected_channel_id or '~' in selected_channel_id):
